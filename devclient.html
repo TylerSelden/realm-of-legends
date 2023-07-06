@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>WebSocket Development Client</title>
+  <style>
+    body {
+      background-color: #202020;
+      color: #fff;
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+      overflow: hidden;
+    }
+
+    h1 {
+      margin-top: 0;
+    }
+
+    #status {
+      font-weight: bold;
+    }
+
+    #content {
+      flex-grow: 1;
+      margin-top: 20px;
+      overflow-y: auto;
+      /* max-height: 400px; */
+      max-height: calc(100vh - 20vh);
+    }
+
+    #input {
+      display: flex;
+      flex-direction: column;
+      margin-top: auto;
+    }
+
+    #input textarea {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 5vh;
+      background-color: #333;
+      color: #fff;
+      border: none;
+      padding: 10px;
+      margin: 0;
+      border: 0;
+      resize: none;
+    }
+
+    #input textarea:focus {
+      outline: none;
+    }
+
+    #input textarea::placeholder {
+      color: #ccc;
+    }
+  </style>
+</head>
+<body>
+  <h1>WebSocket Client</h1>
+
+  <div id="status">Connecting...</div>
+
+  <div id="content"></div>
+
+  <div id="input">
+    <textarea id="messageInput" placeholder="Type a message..." onkeydown="handleKeyDown(event)"></textarea>
+  </div>
+
+  <script>
+    var address = "ws://localhost:8080";
+    var socket;
+
+    function connectWebSocket() {
+      socket = new WebSocket(address);
+
+      socket.onopen = function () {
+        setStatus("Connected");
+        content.innerHTML = "";
+      };
+
+      socket.onmessage = function (event) {
+        var message = event.data;
+        displayMessage(message);
+      };
+
+      socket.onclose = function () {
+        setStatus("Disconnected, attempting to reconnect...");
+        setTimeout(connectWebSocket, 2000);
+      };
+    }
+
+    function setStatus(status) {
+      document.getElementById("status").innerHTML = status;
+    }
+
+    function displayMessage(message) {
+      var content = document.getElementById("content");
+      var isScrolledToBottom = content.scrollHeight - content.clientHeight <= content.scrollTop + 1;
+      content.innerHTML += "<p>" + message + "</p>";
+      if (isScrolledToBottom) {
+        content.scrollTop = content.scrollHeight; // Scroll to bottom
+      }
+    }
+
+    function sendMessage() {
+      var messageInput = document.getElementById("messageInput");
+      var message = messageInput.value;
+      if (message.trim() !== "") {
+        socket.send(message);
+        messageInput.value = "";
+      }
+    }
+
+    function handleKeyDown(event) {
+      if (event.key === "Enter" && !event.shiftKey) {
+        event.preventDefault();
+        sendMessage();
+      }
+    }
+
+    window.onload = function () {
+      connectWebSocket();
+    };
+  </script>
+</body>
+</html>
