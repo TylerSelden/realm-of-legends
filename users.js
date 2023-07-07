@@ -3,21 +3,21 @@ const { sendmsg } = require('./utils.js');
 const { connect } = require('http2');
 
 var users = {
-  "asdf": {
-    passwd: "6a204bd89f3c8348afd5c77c717a097a"
+  "kaius": {
+    passwd: "912ec803b2ce49e4a541068d495ab570"
   }
 };
 
 var login = [
   function (connection, username) {
-    username = username.replace(/[^a-zA-Z-_]/g, '');
+    username = username.replace(/[^a-zA-Z-_]/g, '').toLowerCase();
     connection.username = username;
 
+    connection.sendmsg(username);
     if (users[username] !== undefined) {
-      connection.send(username);
-      connection.sendmsg(`\nWelcome back, ${username}.\nPassword: `, login[1], "nl");
+      connection.sendmsg(`Welcome back, ${username}.\nPassword: `, login[1], "nl");
     } else {
-      connection.send(`${username}, is it? I haven't heard of a ${username} before.\nWould you like to create a new account? [Y/n]`);
+      connection.sendmsg(`${username}, is it? That name is not recognized.\nWould you like to create a new account? [Y/n]`);
       connection.callback = login[2]
       connection.locked = false;
     }
@@ -25,6 +25,7 @@ var login = [
   function (connection, text) {
     connection.sendmsg('*'.repeat(text.length));
     var hash = crypto.createHash('md5').update(text).digest("hex");
+    console.log(hash);
     if (users[connection.username].passwd == hash) {
       connection.sendmsg("successfully logged in.", null, "ld500v");
     } else {
@@ -32,7 +33,12 @@ var login = [
     }
   },
   function (connection, text) {
-
+    if (text.toLowerCase() == 'y') {
+      connection.sendmsg(`\n\n[Account creation process will go here]`);
+      connection.sendmsg(`The Beta has not been programmed further than this, ${connection.username}.`);
+    } else if (text.toLowerCase() == 'n') {
+      connection.sendmsg("\nWhat be thy name, adventurer?", login[0], "l");
+    }
   }
 ]
 

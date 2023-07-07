@@ -25,13 +25,17 @@
     }
     
     pre {
-      font-family: font-family: Consolas, Menlo, Monaco, Lucida Console, Liberation Mono, DejaVu Sans Mono, Bitstream Vera Sans Mono, Courier New, monospace, serif;
+      /* font-family: Consolas, Menlo, Monaco, Lucida Console, Liberation Mono, DejaVu Sans Mono, Bitstream Vera Sans Mono, Courier New, monospace, serif; */
+      width: 100%;
+      word-break: break-all;
     }
 
     #content {
+      width: 100vw;
       flex-grow: 1;
       margin-top: 20px;
       overflow-y: auto;
+      word-break: break-all;
       max-height: calc(100vh - 190px); /* Adjust the value as needed */
     }
     
@@ -85,12 +89,13 @@
       socket.onopen = function () {
         setStatus("Connected");
         var content = document.getElementById("content");
-        content.innerHTML = ""; // Clear the output area
+        content.innerHTML = "<pre id='codeElement'></pre>"; // Clear the output area
       };
 
       socket.onmessage = function (event) {
         var message = event.data;
         displayMessage(message);
+        console.log(message);
       };
 
       socket.onclose = function () {
@@ -106,9 +111,9 @@
     function displayMessage(message) {
       var content = document.getElementById("content");
       var isScrolledToBottom = content.scrollHeight - content.clientHeight <= content.scrollTop + 1;
-      var codeElement = document.createElement("pre");
-      codeElement.textContent = message;
-      content.appendChild(codeElement);
+      var codeElement = document.getElementById("codeElement");
+      message = message.replace(/\n/g, "\n&nbsp;");
+      codeElement.innerHTML += message;
       if (isScrolledToBottom) {
         content.scrollTop = content.scrollHeight; // Scroll to bottom
       }

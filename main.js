@@ -28,8 +28,7 @@ server.on('request', function(request) {
 
     if (connection.validated) {
       // use user account
-      connection.sendmsg(`WELCOME TO THE UNDERGROUNDDDD  ${connection.username}`);
-      connection.sendmsg("(how was the fall...)", null, "d3000");
+      connection.sendmsg(`\nThe Beta has not been programmed further than this, ${connection.username}.`);
     } else {
       connection.callback(connection, msg);
     }
