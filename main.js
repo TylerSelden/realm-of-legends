@@ -2,6 +2,7 @@ const webSocketServer = require('websocket').server;
 const http = require('http');
 const art = require('./art.js');
 
+const { sendmsg } = require('./utils.js');
 const { users, login } = require('./users.js');
 
 
@@ -15,10 +16,8 @@ var server = new webSocketServer({ httpServer: httpServ });
 
 server.on('request', function(request) {
   var connection = request.accept(null, request.origin);
-  connection.send(art.splash);
-
-  connection.callback = login[0];
-  connection.locked = false;
+  connection.sendmsg = sendmsg;
+  connection.sendmsg(art.splash, login[0], "l");
   connection.validated = false;
 
   connection.on('message', function(msg) {
@@ -29,10 +28,8 @@ server.on('request', function(request) {
 
     if (connection.validated) {
       // use user account
-      connection.send("WELCOME TO THE UNDERGROUNDDDD");
-      setTimeout(() => {
-        connection.send("(how was the fall...)");
-      }, 3000);
+      connection.sendmsg(`WELCOME TO THE UNDERGROUNDDDD  ${connection.username}`);
+      connection.sendmsg("(how was the fall...)", null, "d3000");
     } else {
       connection.callback(connection, msg);
     }
