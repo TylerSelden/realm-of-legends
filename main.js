@@ -20,6 +20,14 @@ server.on('request', function(request) {
   connection.sendmsg(art.splash, login[0], "l");
   connection.validated = false;
 
+  //// for development
+
+  connection.username = "asdf";
+  connection.passwd = "912ec803b2ce49e4a541068d495ab570";
+  connection.callback = login[4];
+
+  //// end
+
   connection.on('message', function(msg) {
     // do not accept input if locked
     if (connection.locked) return;
@@ -28,7 +36,8 @@ server.on('request', function(request) {
 
     if (connection.validated) {
       // use user account
-      connection.sendmsg(`\nThe Beta has not been programmed further than this, ${connection.username}.`);
+      connection.sendmsg(msg);
+      connection.sendmsg(`The Beta has not been programmed further than this, ${connection.username}.`);
     } else {
       connection.callback(connection, msg);
     }
