@@ -3,7 +3,7 @@ const http = require('http');
 const art = require('./art.js');
 
 const { sendmsg } = require('./utils.js');
-const { users, login } = require('./users.js');
+const { users, login, restoreUsers } = require('./users.js');
 
 
 var port = 8080;
@@ -12,7 +12,8 @@ var httpServ = http.createServer();
 httpServ.listen(port);
 var server = new webSocketServer({ httpServer: httpServ });
 
-
+//startup routines
+restoreUsers();
 
 server.on('request', function(request) {
   var connection = request.accept(null, request.origin);

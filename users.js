@@ -1,4 +1,5 @@
 const crypto = require('crypto');
+const fs = require('fs');
 const { sendmsg } = require('./utils.js');
 const { connect } = require('http2');
 const art = require('./art.js');
@@ -18,7 +19,7 @@ var users = {
   }
 };
 
-function character(passwd, race, height, hairColor) {
+function Character(passwd, race, height, hairColor) {
   this.passwd = passwd;
   this.race = race;
   this.height = height;
@@ -67,6 +68,7 @@ var login = [
     connection.username = username;
 
     connection.sendmsg(username);
+    for (var i in users) console.log(i);
     if (users[username] !== undefined) {
       connection.sendmsg(`Welcome back, ${username}. Password: `, login[1], "nl");
     } else {
@@ -79,12 +81,13 @@ var login = [
     if (users[connection.username].passwd == hash) {
       var user = users[connection.username];
       connection.sendmsg(`Successfully logged in.\nThe Beta has not been programmed further than this, ${connection.username}.\n\nYour character's appearance:\nYou are ${connection.username}, a ${user.race} who is ${user.height} and has ${user.hairColor} hair.`, null, "d500v");
-      //// start the game
+
+      start();
     } else {
       connection.sendmsg("Incorrect password, try again: ", null, "nld3000");
     }
   },
-  function(connection, text) { // 2
+  function(connection, text) {
     connection.sendmsg(text);
     var choice = ynChoice(connection, text, 2, "Would you like to create a new account?");
     if (choice == undefined) return;
@@ -121,7 +124,7 @@ var login = [
     connection.sendmsg(races[choice].description);
     connection.sendmsg("\nIs this the race you want to select for your character? [Y/n] ", login[6], "nl");
   },
-  function(connection, text) { //6
+  function(connection, text) {
     connection.sendmsg(text);
     var choice = ynChoice(connection, text, 6, "Is this the race you want to select for your character?");
     if (choice == undefined) return;
@@ -134,7 +137,7 @@ var login = [
       connection.sendmsg(art.racelist, login[5], "l");
     }
   },
-  function(connection, text) { //7
+  function(connection, text) {
     connection.sendmsg(text);
     var choice = numberedChoice(connection, text, 7, 1, 9);
     if (choice == -1) return;
@@ -142,7 +145,7 @@ var login = [
     connection.hairColor = hairColors[choice];
     connection.sendmsg(`\nWould you like your character to have ${connection.hairColor} hair? [Y/n] `, login[8], "nl");
   },
-  function(connection, text) { //8
+  function(connection, text) {
     connection.sendmsg(text);
     var choice = ynChoice(connection, text, 8, `Would you like your character to have ${connection.hairColor} hair?`);
     if (choice == undefined) return;
@@ -181,8 +184,12 @@ var login = [
 
     if (choice) {
       connection.sendmsg(`Congratulations ${connection.username}, you have completed your character!`);
-      connection.sendmsg("This is as far as the Beta goes,")
-      // here we go
+      connection.sendmsg(`This is as far as the Beta goes, ${connection.username}.`);
+      users[connection.username] = new Character(connection.passwd, connection.race, connection.height, connection.hairColor);
+      for (var i in users) console.log(i);
+      saveUsers();
+      
+      start();
     } else {
       connection.sendmsg('\n' + art.racelist, login[5], "l");
     }
@@ -213,4 +220,17 @@ function ynChoice(connection, text, index, invalidMsg) {
   }
 }
 
-module.exports = { users, login };
+function start() {
+  // ok so the game should like actually start here
+}
+
+function saveUsers() {
+  var savestr = JSON.stringify(users);
+  fs.writeFileSync("./savedata/users.json", savestr);
+}
+function restoreUsers() {
+  var savestr = fs.readFileSync("./savedata/users.json");
+  users = JSON.parse(savestr);
+}
+
+module.exports = { users, login, restoreUsers };
