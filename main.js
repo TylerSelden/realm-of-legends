@@ -22,9 +22,9 @@ server.on('request', function(request) {
 
   //// for development
 
-  connection.username = "asdf";
-  connection.passwd = "912ec803b2ce49e4a541068d495ab570";
-  connection.callback = login[4];
+  // connection.username = "asdf";
+  // connection.passwd = "912ec803b2ce49e4a541068d495ab570";
+  // connection.callback = login[4];
 
   //// end
 
@@ -37,7 +37,9 @@ server.on('request', function(request) {
     if (connection.validated) {
       // use user account
       connection.sendmsg(msg);
+      var user = users[connection.username];
       connection.sendmsg(`The Beta has not been programmed further than this, ${connection.username}.`);
+      connection.sendmsg(`Your character's appearance:\nYou are ${connection.username}, a ${user.race} who is ${user.height} and has ${user.hairColor} hair.`);
     } else {
       connection.callback(connection, msg);
     }
