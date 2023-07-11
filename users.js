@@ -4,20 +4,7 @@ const { sendmsg } = require('./utils.js');
 const { connect } = require('http2');
 const art = require('./art.js');
 
-var users = {
-  "kaius": {
-    passwd: "912ec803b2ce49e4a541068d495ab570",
-    race: "elf",
-    height: "tall",
-    hairColor: "brown"
-  },
-  "asdf": {
-    passwd: "912ec803b2ce49e4a541068d495ab570",
-    race: "orc",
-    height: "short",
-    hairColor: "silver"
-  }
-};
+var users = {};
 
 function Character(passwd, race, height, hairColor) {
   this.passwd = passwd;
@@ -33,27 +20,27 @@ const heights = ["very tall", "tall", "average in height", "short", "very short"
 
 const races = [
   {
-    name: "Human",
+    name: "human",
     description: "Versatile and adaptable, humans possess a diverse range of skills and abilities, making them capable of excelling in various roles within the land. Humans are proficient in Wisdom."
   },
   {
-    name: "Elf",
+    name: "elf",
     description: "Graceful and attuned to nature, elves are known for their agility, keen senses, and mastery of archery and magic. Elves are proficient in Dexterity."
   },
   {
-    name: "Dwarf",
+    name: "dwarf",
     description: "Resilient and skilled craftsmen, dwarves are renowned for their sturdy physique, exceptional endurance, and expertise in mining and forging. Dwarves are proficient in Constitution."
   },
   {
-    name: "Dragonborn",
+    name: "dragonborn",
     description: "Ancient and wise, dragonborn embody power and arcane knowledge, carrying the blood of dragons within them. Dragonborn are proficient in Intelligence."
   },
   {
-    name: "Centaur",
+    name: "centaur",
     description: "Majestic and swift, centaurs possess both the strength of a horse and the intellect of a humanoid, making them exceptional warriors and natural leaders. Centaurs are proficient in Charisma."
   },
   {
-    name: "Orc",
+    name: "orc",
     description: "Fierce and formidable, orcs are born warriors, known for their physical strength, ferocity in battle, and indomitable spirit. Orcs are proficient in Strength."
   }
 ]
@@ -225,12 +212,13 @@ function start() {
 }
 
 function saveUsers() {
-  var savestr = JSON.stringify(users);
+  var savestr = JSON.stringify(users, null, 2);
   fs.writeFileSync("./savedata/users.json", savestr);
 }
 function restoreUsers() {
   var savestr = fs.readFileSync("./savedata/users.json");
   users = JSON.parse(savestr);
+  for (var i in users) console.log(i);
 }
 
 module.exports = { users, login, restoreUsers };
