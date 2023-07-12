@@ -1,9 +1,10 @@
 const webSocketServer = require('websocket').server;
 const http = require('http');
-const art = require('./art.js');
 
-const { sendmsg } = require('./utils.js');
-const { users, login, restoreUsers } = require('./users.js');
+var art = require('./art.js');
+var { sendmsg } = require('./utils.js');
+var { users, login, restoreUsers } = require('./users.js');
+var { loadRooms, rooms, handleInput } = require('./rooms.js')
 
 
 var port = 8080;
@@ -13,7 +14,9 @@ httpServ.listen(port);
 var server = new webSocketServer({ httpServer: httpServ });
 
 //startup routines
+console.log("Beginning startup routines...");
 restoreUsers();
+loadRooms();
 
 server.on('request', function(request) {
   var connection = request.accept(null, request.origin);
@@ -31,6 +34,7 @@ server.on('request', function(request) {
       // use user account
       connection.sendmsg(msg);
       var user = users[connection.username];
+      console.log(connection.username, users);
       connection.sendmsg(`The Beta has not been programmed further than this, ${connection.username}.`);
       connection.sendmsg(`Your character's appearance:\nYou are ${connection.username}, a ${user.race} who is ${user.height} and has ${user.hairColor} hair.`);
     } else {

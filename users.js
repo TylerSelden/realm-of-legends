@@ -1,10 +1,13 @@
 const crypto = require('crypto');
 const fs = require('fs');
-const { sendmsg } = require('./utils.js');
-const { connect } = require('http2');
-const art = require('./art.js');
 
-var users = {};
+var { sendmsg } = require('./utils.js');
+var { connect } = require('http2');
+var art = require('./art.js');
+var { loadRooms, rooms, handleInput } = require('./rooms.js')
+
+
+users = {};
 
 function Character(passwd, race, height, hairColor) {
   this.passwd = passwd;
@@ -66,9 +69,9 @@ var login = [
     var hash = md5(text);
     if (users[connection.username].passwd == hash) {
       var user = users[connection.username];
-      connection.sendmsg(`Successfully logged in.\nThe Beta has not been programmed further than this, ${connection.username}.\n\nYour character's appearance:\nYou are ${connection.username}, a ${user.race} who is ${user.height} and has ${user.hairColor} hair.`, null, "d500v");
+      connection.sendmsg("Successfully logged in.", null, "d500v");
 
-      setTimeout(() => {start(connection)}, 702);
+      setTimeout(() => {start(connection)}, 700);
     } else {
       connection.sendmsg("Incorrect password, try again: ", null, "nld3000");
     }
@@ -174,7 +177,7 @@ var login = [
       users[connection.username] = new Character(connection.passwd, connection.race, connection.height, connection.hairColor);
       saveUsers();
       
-      start();
+      start(connection);
     } else {
       connection.sendmsg('\n' + art.racelist, login[5], "l");
     }
@@ -191,7 +194,7 @@ function numberedChoice(connection, text, index, min, max) {
     return -1;
   } else {
     choice--;
-    return choice;  
+    return choice;
   }
 }
 
@@ -207,8 +210,7 @@ function ynChoice(connection, text, index, invalidMsg) {
 
 function start(connection) {
   // ok so the game should like actually start here
-  connection.sendmsg("\n\neYou are on a hilltop, overlooking the sprawling landscape of Ambia. You experience a feeling of unparalleled tranquility. The breathtaking vista stretches before your eyes, revealing the magnificent tapestry of Ambia in all its glory. Rolling fields stretch out beneath you, with lush forests off to the west and towering mountains to the far north. A river, shining with the sun's rays, cuts across the landscape, leading to a glimmering lake to the east. To the south is an enormous castle, with large, imposing walls. The fields below are swaying gently in the soft breeze.\n\nA hush settles over the hilltop, broken only by the gentle symphony of nature. The air is crisp and clean, carrying with it the subtle scents of grass and blooming blossoms. The golden rays of sunlight cast a warm glow, illuminating the landscape in a kaleidoscope of vibrant hues.");
-
+  connection.sendmsg("You have no new messages.\n", handleInput, "l");
 }
 
 function saveUsers() {
@@ -216,8 +218,11 @@ function saveUsers() {
   fs.writeFileSync("./savedata/users.json", savestr);
 }
 function restoreUsers() {
+  console.log("Restoring user data...");
   var savestr = fs.readFileSync("./savedata/users.json");
   users = JSON.parse(savestr);
+  console.log("User data loaded.");
 }
 
 module.exports = { users, login, restoreUsers };
+process.users = users;

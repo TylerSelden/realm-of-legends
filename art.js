@@ -1,6 +1,6 @@
 const fs = require('fs');
 
-var art = {};
+art = {};
 
 fs.readdirSync("./art").forEach(file => {
   art[file] = fs.readFileSync("./art/" + file, { encoding: 'utf8', flag: 'r' });
