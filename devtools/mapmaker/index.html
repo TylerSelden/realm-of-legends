@@ -73,6 +73,7 @@
       border: none;
       border-radius: 4px;
       cursor: pointer;
+      margin-top: 10px;
     }
 
     button:hover {
@@ -83,8 +84,19 @@
       background-color: #565656;
     }
 
-    /* Text styling */
+    .delete {
+      background-color: #bf3f3f;
+    }
 
+    .delete:hover {
+      background-color: #aa2a2a;
+    }
+
+    .delete:active {
+      background-color: #aa1a1a;
+    }
+
+    /* Text styling */
     h2, h3 {
       color: #ffffff;
     }
@@ -92,6 +104,70 @@
     p {
       color: #cccccc;
       margin-bottom: 15px;
+    }
+
+    /* Text input styling */
+    textarea {
+      height: 80px;
+    }
+
+    input[type="text"],
+    textarea {
+      width: 50%;
+      padding: 8px;
+      margin: 5px;
+      border: 1px solid #333333;
+      background-color: #1e1e1e;
+      color: #ffffff;
+      border-radius: 4px;
+      transition: border-color 0.3s ease;
+      resize: vertical; /* Allow vertical resizing of the textarea */
+    }
+
+    input[type="text"]:focus,
+    textarea:focus {
+      outline: none;
+      border-color: #4f4f4f;
+    }
+
+    /* Custom styling for textarea label */
+    .textarea-label {
+      display: flex;
+      align-items: center;
+    }
+
+    .textarea-label span {
+      margin-right: 10px;
+      white-space: nowrap;
+    }
+
+    /* Expandable menu styling */
+    .expandable-menu {
+      margin-bottom: 15px;
+    }
+
+    .expandable-menu-button {
+      background-color: transparent;
+      border: none;
+      color: #ffffff;
+      cursor: pointer;
+      font-size: 16px;
+      margin: 5px 0;
+      padding: 0;
+      text-decoration: underline;
+    }
+
+    .expandable-menu-content {
+      margin-left: 25px;
+      display: none;
+    }
+
+    .expandable-menu-content.show {
+      display: block;
+    }
+
+    .expandable-menu-label {
+      margin-top: 10px;
     }
   </style>
 </head>
@@ -102,19 +178,64 @@
   <div class="container">
     <canvas id="canvas" tabindex="1"></canvas>
     <div class="content">
-      <h2>Welcome to the MUDPi MapMaker</h2>
-      <h3>How it works:</h3>
-      <p>Inside each of these boxes is a set of coordinates. This is where it is on the grid of the map.</p>
-      <p>The first two are X and Y, and the third is Z, the layer. Since players can move up and down in-game, a Z axis is needed to create a 3D world.</p>
-      <p>To move around the grid, click and drag your cursor across the screen. To move between layers, use the up and down arrow keys (make sure your browser's focus is on the window to the left).</p>
-      <p>To modify a room, click on it. This window should switch to the information you need to fill out for that room. Once the information is saved, that room's color will change on the grid, and the name of the room will be displayed beneath the coordinates.</p>
-      <p>Click the button below to upload an existing JSON file to edit.</p>
-
-      <button onclick="alert('Okay so I haven\'t actually added in support for this yet, so... yeah.')">Upload JSON</button>
+      <div id="default">
+        <h2>Welcome to the MUDPi MapMaker</h2>
+        <h3>How it works:</h3>
+        <p>Inside each of these boxes is a set of coordinates. This is where it is on the grid of the map.</p>
+        <p>The first two are X and Y, and the third is Z, the layer. Since players can move up and down in-game, a Z axis is
+          needed to create a 3D world.</p>
+        <p>To move around the grid, click and drag your cursor across the screen. To move between layers, use the up and down
+          arrow keys (make sure your browser's focus is on the window to the left).</p>
+        <p>To modify a room, click on it. This window should switch to the information you need to fill out for that room.
+          Once the information is saved, that room's color will change on the grid, and the name of the room will be displayed
+          beneath the coordinates.</p>
+        <p>To get started, click on a box to the left, or click the button below to upload an existing JSON file to edit.</p>
+      
+        <button onclick="handleUpload()">Upload JSON</button>
+        <button onclick="handleDownload()">Download JSON</button>
+     </div>
+     <div id="editor" style="display: none;">
+      <h2>JSON Room Editor</h2>
+      <h3 id="coords">(0, 0, 1)</h3>
+      <p>Enter data into the fields below to create the room, then click Save.</p>
+      <label for="name">Name: </label>
+      <input type="text" id="name" placeholder="Hilltop"><br>
+      <div class="textarea-label">
+        <span>Description:</span>
+        <textarea id="description" placeholder="You are on a hilltop..."></textarea>
+      </div>
+      <div class="expandable-menu">
+        <button class="expandable-menu-button" onclick="toggleExits()">Exits:</button>
+        <div class="expandable-menu-content" id="exitsContent">
+          <label class="expandable-menu-label" for="north">North: </label>
+          <input type="text" id="north" placeholder="To the north...">
+          <br>
+          <label class="expandable-menu-label" for="east">East: </label>
+          <input type="text" id="east" placeholder="To the east is a large...">
+          <br>
+          <label class="expandable-menu-label" for="south">South: </label>
+          <input type="text" id="south" placeholder="To the south is a hidden...">
+          <br>
+          <label class="expandable-menu-label" for="west">West: </label>
+          <input type="text" id="west" placeholder="To the west lies a...">
+        </div>
+      </div>
+      <label for="items">Items: </label>
+      <input type="text" id="items" placeholder="sword, shield, potion"><br>
+      <button onclick="saveRoom()">Save</button>
+      <button onclick="deleteRoom()" class="delete">Delete</button>
+      <br><br>
+      <button onclick="showDisplay()">Back</button>
+     </div>
     </div>
   </div>
 
-  <!-- Add script tag and link to your JavaScript file -->
   <script src="script.js"></script>
+  <script>
+    function toggleExits() {
+      const exitsContent = document.getElementById("exitsContent");
+      exitsContent.classList.toggle("show");
+    }
+  </script>
 </body>
 </html>
