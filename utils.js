@@ -27,16 +27,18 @@ function sendmsg(message, callback, flags) {
 
     //break message into line-sized pieces
     var broken = message.split('\n');
-    for (var i in broken) {
+    for (var i = 0; i < broken.length; i++) {
       if (broken[i].length > 81) {
-        var index = broken[i].lastIndexOf(" ", 82);
+        var index = broken[i].lastIndexOf(" ", 81);
         broken[i] = broken[i].substring(0, index) + '\n' + broken[i].substring(index + 1);
-
-        //restart to prevent extra-long lines
+    
+        // Split the array again to prevent extra-long lines
         broken = broken.join('\n').split('\n');
-        i = 0;
+        i = 0; // Restart the loop
       }
     }
+    
+    
     message = broken.join('\n');
     this.send(message);
   }, delay);

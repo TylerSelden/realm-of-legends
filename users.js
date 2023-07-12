@@ -55,7 +55,6 @@ var login = [
     connection.username = username;
 
     connection.sendmsg(username);
-    for (var i in users) console.log(i);
     if (users[username] !== undefined) {
       connection.sendmsg(`Welcome back, ${username}. Password: `, login[1], "nl");
     } else {
@@ -69,7 +68,7 @@ var login = [
       var user = users[connection.username];
       connection.sendmsg(`Successfully logged in.\nThe Beta has not been programmed further than this, ${connection.username}.\n\nYour character's appearance:\nYou are ${connection.username}, a ${user.race} who is ${user.height} and has ${user.hairColor} hair.`, null, "d500v");
 
-      start();
+      setTimeout(() => {start(connection)}, 702);
     } else {
       connection.sendmsg("Incorrect password, try again: ", null, "nld3000");
     }
@@ -173,7 +172,6 @@ var login = [
       connection.sendmsg(`Congratulations ${connection.username}, you have completed your character!`);
       connection.sendmsg(`This is as far as the Beta goes, ${connection.username}.`);
       users[connection.username] = new Character(connection.passwd, connection.race, connection.height, connection.hairColor);
-      for (var i in users) console.log(i);
       saveUsers();
       
       start();
@@ -207,8 +205,10 @@ function ynChoice(connection, text, index, invalidMsg) {
   }
 }
 
-function start() {
+function start(connection) {
   // ok so the game should like actually start here
+  connection.sendmsg("\n\neYou are on a hilltop, overlooking the sprawling landscape of Ambia. You experience a feeling of unparalleled tranquility. The breathtaking vista stretches before your eyes, revealing the magnificent tapestry of Ambia in all its glory. Rolling fields stretch out beneath you, with lush forests off to the west and towering mountains to the far north. A river, shining with the sun's rays, cuts across the landscape, leading to a glimmering lake to the east. To the south is an enormous castle, with large, imposing walls. The fields below are swaying gently in the soft breeze.\n\nA hush settles over the hilltop, broken only by the gentle symphony of nature. The air is crisp and clean, carrying with it the subtle scents of grass and blooming blossoms. The golden rays of sunlight cast a warm glow, illuminating the landscape in a kaleidoscope of vibrant hues.");
+
 }
 
 function saveUsers() {
@@ -218,7 +218,6 @@ function saveUsers() {
 function restoreUsers() {
   var savestr = fs.readFileSync("./savedata/users.json");
   users = JSON.parse(savestr);
-  for (var i in users) console.log(i);
 }
 
 module.exports = { users, login, restoreUsers };

@@ -21,14 +21,6 @@ server.on('request', function(request) {
   connection.sendmsg(art.splash, login[0], "l");
   connection.validated = false;
 
-  //// for development
-
-  // connection.username = "asdf";
-  // connection.passwd = "912ec803b2ce49e4a541068d495ab570";
-  // connection.callback = login[4];
-
-  //// end
-
   connection.on('message', function(msg) {
     // do not accept input if locked
     if (connection.locked) return;

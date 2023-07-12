@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MapMaker</title>
+  <style>
+    /* Dark mode styling */
+    body {
+      background-color: #1e1e1e;
+      color: #fff;
+      margin: 0;
+      padding: 0;
+      font-family: Arial, sans-serif;
+    }
+
+    /* Container for the main content */
+    .container {
+      position: absolute;
+      display: flex;
+      width: 100%;
+      align-items: flex-start;
+      height: 95vh;
+      bottom: 0;
+    }
+
+    /* Left side canvas */
+    canvas {
+      width: 50%;
+      height: 100%; /* Subtract height of header container */
+      background-color: #252525;
+    }
+    canvas:focus {
+      outline: none;
+    }
+
+    /* Right side content */
+    .content {
+      width: 50%;
+      height: 100%; /* Subtract height of header container */
+      padding: 20px;
+      box-sizing: border-box;
+      line-height: 1.5;
+    }
+
+    /* Container for the header */
+    .header-container {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: calc(100vw - 20px);
+      background-color: #1e1e1e;
+      height: 5vh;
+      display: flex;
+      align-items: center;
+      padding-left: 20px;
+    }
+
+    /* Header styling */
+    header {
+      font-size: 24px;
+      font-weight: bold;
+      margin: 0;
+    }
+
+    /* Button styling */
+    button {
+      display: inline-block;
+      padding: 10px 20px;
+      font-size: 16px;
+      background-color: #3f3f3f;
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #4f4f4f;
+    }
+
+    button:active {
+      background-color: #565656;
+    }
+
+    /* Text styling */
+
+    h2, h3 {
+      color: #ffffff;
+    }
+
+    p {
+      color: #cccccc;
+      margin-bottom: 15px;
+    }
+  </style>
+</head>
+<body>
+  <div class="header-container">
+    <header>MapMaker</header>
+  </div>
+  <div class="container">
+    <canvas id="canvas" tabindex="1"></canvas>
+    <div class="content">
+      <h2>Welcome to the MUDPi MapMaker</h2>
+      <h3>How it works:</h3>
+      <p>Inside each of these boxes is a set of coordinates. This is where it is on the grid of the map.</p>
+      <p>The first two are X and Y, and the third is Z, the layer. Since players can move up and down in-game, a Z axis is needed to create a 3D world.</p>
+      <p>To move around the grid, click and drag your cursor across the screen. To move between layers, use the up and down arrow keys (make sure your browser's focus is on the window to the left).</p>
+      <p>To modify a room, click on it. This window should switch to the information you need to fill out for that room. Once the information is saved, that room's color will change on the grid, and the name of the room will be displayed beneath the coordinates.</p>
+      <p>Click the button below to upload an existing JSON file to edit.</p>
+
+      <button onclick="alert('Okay so I haven\'t actually added in support for this yet, so... yeah.')">Upload JSON</button>
+    </div>
+  </div>
+
+  <!-- Add script tag and link to your JavaScript file -->
+  <script src="script.js"></script>
+</body>
+</html>
