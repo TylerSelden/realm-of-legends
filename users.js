@@ -1,13 +1,12 @@
 const crypto = require('crypto');
 const fs = require('fs');
 
-var { sendmsg } = require('./utils.js');
-var { connect } = require('http2');
-var art = require('./art.js');
+// var art = require('./art.js');
+require('./art.js');
 var { loadRooms, rooms, handleInput } = require('./rooms.js')
 
 
-users = {};
+process.users = {};
 
 function Character(passwd, race, height, hairColor) {
   this.passwd = passwd;
@@ -52,26 +51,35 @@ function md5(str) {
   return crypto.createHash('md5').update(str).digest("hex");
 }
 
-var login = [
+process.login = [
   function(connection, username) {
     username = username.replace(/[^a-zA-Z-_]/g, '').toLowerCase();
     connection.username = username;
-
     connection.sendmsg(username);
-    if (users[username] !== undefined) {
-      connection.sendmsg(`Welcome back, ${username}. Password: `, login[1], "nl");
+
+    //check if user is already connected under same username
+    if (process.users[username].connection !== undefined) {
+      connection.sendmsg("Somebody is already connected under that username.", null);
+      setTimeout(() => {connection.close()}, 500);
+      return;
     } else {
-      connection.sendmsg(`Ah, ${username}, you say? Alas, that name remains untold within these hallowed realms. Would you like to create a new account? [Y/n] `, login[2], "nl");
+      process.users[username].connection = connection;
+    }
+
+    if (process.users[username] !== undefined) {
+      connection.sendmsg(`Welcome back, ${username}. Password: `, process.login[1], "nl");
+    } else {
+      connection.sendmsg(`Ah, ${username}, you say? Alas, that name remains untold within these hallowed realms. Would you like to create a new account? [Y/n] `, process.login[2], "nl");
     }
   },
   function(connection, text) {
     connection.sendmsg('*'.repeat(text.length));
     var hash = md5(text);
-    if (users[connection.username].passwd == hash) {
-      var user = users[connection.username];
+    if (process.users[connection.username].passwd == hash) {
+      var user = process.users[connection.username];
       connection.sendmsg("Successfully logged in.", null, "d500v");
 
-      setTimeout(() => {start(connection)}, 700);
+      setTimeout(() => {process.start(connection)}, 700);
     } else {
       connection.sendmsg("Incorrect password, try again: ", null, "nld3000");
     }
@@ -83,24 +91,24 @@ var login = [
 
     if (choice) {
       connection.sendmsg(`\nWelcome to the Land of Ambia, ${connection.username}. Before you get started, we need to ask a few questions about your character.`);
-      connection.sendmsg(`First, you'll need to set a password for your account: `, login[3], "nl");
+      connection.sendmsg(`First, you'll need to set a password for your account: `, process.login[3], "nl");
     } else {
-      connection.sendmsg("What be thy name, adventurer?", login[0], "l");
+      connection.sendmsg("What be thy name, adventurer?", process.login[0], "l");
     }
   },
   function(connection, text) {
     connection.passwd = md5(text);
     connection.sendmsg('*'.repeat(text.length));
-    connection.sendmsg("Re-enter password: ", login[4], "nl");
+    connection.sendmsg("Re-enter password: ", process.login[4], "nl");
   },
   function(connection, text) {
     connection.sendmsg('*'.repeat(text.length));
     var hash = md5(text);
     if (connection.passwd == hash) {
       connection.sendmsg("Your password has been set.");
-      connection.sendmsg('\n' + art.racelist, login[5], "l");
+      connection.sendmsg('\n' + process.art.racelist, process.login[5], "l");
     } else {
-      connection.sendmsg("Passwords do not match, try again. Enter password: ", login[3], "nl");
+      connection.sendmsg("Passwords do not match, try again. Enter password: ", process.login[3], "nl");
     }
   },
   function(connection, text) {
@@ -111,7 +119,7 @@ var login = [
     connection.race = races[choice].name;
     connection.sendmsg(`${races[choice].name}:`);
     connection.sendmsg(races[choice].description);
-    connection.sendmsg("\nIs this the race you want to select for your character? [Y/n] ", login[6], "nl");
+    connection.sendmsg("\nIs this the race you want to select for your character? [Y/n] ", process.login[6], "nl");
   },
   function(connection, text) {
     connection.sendmsg(text);
@@ -121,9 +129,9 @@ var login = [
     if (choice) {
       connection.sendmsg(`Your character's race has been set to ${connection.race}.`);
       connection.sendmsg(`\nFinally, you'll need to customize your character's appearance, to make it stand out from everybody else.`);
-      connection.sendmsg(art.characterHairColor, login[7], "l");
+      connection.sendmsg(process.art.characterHairColor, process.login[7], "l");
     } else {
-      connection.sendmsg(art.racelist, login[5], "l");
+      connection.sendmsg(process.art.racelist, process.login[5], "l");
     }
   },
   function(connection, text) {
@@ -132,7 +140,7 @@ var login = [
     if (choice == -1) return;
 
     connection.hairColor = hairColors[choice];
-    connection.sendmsg(`\nWould you like your character to have ${connection.hairColor} hair? [Y/n] `, login[8], "nl");
+    connection.sendmsg(`\nWould you like your character to have ${connection.hairColor} hair? [Y/n] `, process.login[8], "nl");
   },
   function(connection, text) {
     connection.sendmsg(text);
@@ -141,9 +149,9 @@ var login = [
 
     if (choice) {
       connection.sendmsg(`Your character's hair color has been set to ${connection.hairColor}.`);
-      connection.sendmsg('\n' + art.characterHeight, login[9], "l");
+      connection.sendmsg('\n' + process.art.characterHeight, process.login[9], "l");
     } else {
-      connection.sendmsg(art.characterHairColor, login[7], "l");
+      connection.sendmsg(process.art.characterHairColor, process.login[7], "l");
     }
   },
   function(connection, text) {
@@ -152,7 +160,7 @@ var login = [
     if (choice == -1) return;
 
     connection.height = heights[choice];
-    connection.sendmsg(`\nWould you like your character to be ${connection.height}? [Y/n] `, login[10], "nl");
+    connection.sendmsg(`\nWould you like your character to be ${connection.height}? [Y/n] `, process.login[10], "nl");
   },
   function(connection, text) {
     connection.sendmsg(text);
@@ -161,9 +169,9 @@ var login = [
 
     if (choice) {
       connection.sendmsg(`\nYou are ${connection.username}, a ${connection.race} who is ${connection.height} and has ${connection.hairColor} hair.`);
-      connection.sendmsg("Is this description correct (this cannot be changed)? [Y/n] ", login[11], "nl");
+      connection.sendmsg("Is this description correct (this cannot be changed)? [Y/n] ", process.login[11], "nl");
     } else {
-      connection.sendmsg(art.characterHeight, login[9], "l");
+      connection.sendmsg(process.art.characterHeight, process.login[9], "l");
     }
   },
   function(connection, text) {
@@ -173,13 +181,13 @@ var login = [
 
     if (choice) {
       connection.sendmsg(`Congratulations ${connection.username}, you have completed your character!`);
-      connection.sendmsg(`This is as far as the Beta goes, ${connection.username}.`);
-      users[connection.username] = new Character(connection.passwd, connection.race, connection.height, connection.hairColor);
+      connection.sendmsg(`Logging in...\n`);
+      process.users[connection.username] = new Character(connection.passwd, connection.race, connection.height, connection.hairColor);
       saveUsers();
       
-      start(connection);
+      process.start(connection);
     } else {
-      connection.sendmsg('\n' + art.racelist, login[5], "l");
+      connection.sendmsg('\n' + process.art.racelist, process.login[5], "l");
     }
   }
 ]
@@ -187,10 +195,10 @@ var login = [
 function numberedChoice(connection, text, index, min, max) {
   var choice = parseInt(text);
   if (isNaN(choice)) {
-    connection.sendmsg("Please enter a valid number: ", login[index], "nl");
+    connection.sendmsg("Please enter a valid number: ", process.login[index], "nl");
     return -1;
   } else if (choice < min || choice > max) {
-    connection.sendmsg(`Please enter a number between ${min} and ${max}: `, login[index], "nl");
+    connection.sendmsg(`Please enter a number between ${min} and ${max}: `, process.login[index], "nl");
     return -1;
   } else {
     choice--;
@@ -204,25 +212,26 @@ function ynChoice(connection, text, index, invalidMsg) {
   } else if (text.toLowerCase() == 'n') {
     return false;
   } else {
-    connection.sendmsg(`Invalid option. ${invalidMsg} [Y/n] `, login[index], "nl");
+    connection.sendmsg(`Invalid option. ${invalidMsg} [Y/n] `, process.login[index], "nl");
   }
 }
 
-function start(connection) {
+process.start = function(connection) {
   // ok so the game should like actually start here
   connection.sendmsg("You have no new messages.\n", handleInput, "l");
 }
 
 function saveUsers() {
-  var savestr = JSON.stringify(users, null, 2);
+  var savestr = JSON.stringify(process.users, null, 2);
   fs.writeFileSync("./savedata/users.json", savestr);
 }
-function restoreUsers() {
+process.restoreUsers = function() {
   console.log("Restoring user data...");
   var savestr = fs.readFileSync("./savedata/users.json");
-  users = JSON.parse(savestr);
+  process.users = JSON.parse(savestr);
+  // remove garbage
+  for (var i in process.users) {
+    delete process.users[i].connection;
+  }
   console.log("User data loaded.");
 }
-
-module.exports = { users, login, restoreUsers };
-process.users = users;

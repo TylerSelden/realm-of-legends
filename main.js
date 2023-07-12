@@ -1,10 +1,14 @@
 const webSocketServer = require('websocket').server;
 const http = require('http');
 
-var art = require('./art.js');
-var { sendmsg } = require('./utils.js');
-var { users, login, restoreUsers } = require('./users.js');
-var { loadRooms, rooms, handleInput } = require('./rooms.js')
+// var art = require('./art.js');
+require('./art.js');
+// var { sendmsg } = require('./utils.js');
+require('./utils.js');
+// var { restoreUsers } = require('./users.js');
+require('./users.js')
+// var { loadRooms, rooms, handleInput } = require('./rooms.js')
+require('./rooms.js');
 
 
 var port = 8080;
@@ -14,14 +18,16 @@ httpServ.listen(port);
 var server = new webSocketServer({ httpServer: httpServ });
 
 //startup routines
-console.log("Beginning startup routines...");
-restoreUsers();
-loadRooms();
+console.log("\nBeginning startup routines...");
+process.restoreUsers();
+process.loadRooms();
+console.log("Startup routines finished!");
+console.log(`Starting server on port ${port}.`)
 
 server.on('request', function(request) {
   var connection = request.accept(null, request.origin);
-  connection.sendmsg = sendmsg;
-  connection.sendmsg(art.splash, login[0], "l");
+  connection.sendmsg = process.sendmsg;
+  connection.sendmsg(process.art.splash, process.login[0], "l");
   connection.validated = false;
 
   connection.on('message', function(msg) {
@@ -32,13 +38,13 @@ server.on('request', function(request) {
 
     if (connection.validated) {
       // use user account
-      connection.sendmsg(msg);
-      var user = users[connection.username];
-      console.log(connection.username, users);
-      connection.sendmsg(`The Beta has not been programmed further than this, ${connection.username}.`);
-      connection.sendmsg(`Your character's appearance:\nYou are ${connection.username}, a ${user.race} who is ${user.height} and has ${user.hairColor} hair.`);
+      var user = process.users[connection.username];
+      process.handleInput(connection, msg);
     } else {
       connection.callback(connection, msg);
     }
+  });
+  connection.on('close', function() {
+    delete process.users[connection.username].connection;
   });
 });

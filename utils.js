@@ -1,4 +1,4 @@
-function sendmsg(message, callback, flags) {
+process.sendmsg = function(message, callback, flags) {
   if (flags == undefined) flags = "";
   /*
     flags:
@@ -43,5 +43,3 @@ function sendmsg(message, callback, flags) {
     this.send(message);
   }, delay);
 }
-
-module.exports = { sendmsg }

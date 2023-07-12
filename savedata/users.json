@@ -16,5 +16,11 @@
     "race": "unicorn",
     "height": "tall",
     "hairColor": "silver"
+  },
+  "fdsa": {
+    "passwd": "fc2baa1a20b4d5190b122b383d7449fd",
+    "race": "human",
+    "height": "average in height",
+    "hairColor": "red"
   }
 }

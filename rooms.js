@@ -1,16 +1,15 @@
 const fs = require('fs');
 
-var rooms = {};
+process.rooms = {};
 
-function loadRooms() {
+process.loadRooms = function() {
   console.log("Loading rooms...");
   var savestr = fs.readFileSync("./rooms/data.json");
-  rooms = JSON.parse(savestr);
+  process.rooms = JSON.parse(savestr);
   console.log("Rooms loaded successfully.");
 }
 
-function handleInput(connection, text) {
-
+process.handleInput = function(connection, text) {
+  connection.sendmsg(text);
+  connection.sendmsg("So this is basically as far as I've programmed, but it should be pretty easy going from here on out :)");
 }
-
-module.exports = { loadRooms, rooms, handleInput }
