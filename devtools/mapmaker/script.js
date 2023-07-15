@@ -89,17 +89,21 @@ function isEmpty(obj) {
 }
 
 function saveRoom() {
+  var exits = {};
+
+  if (elems.north.value.trim() !== "") exits.north = { coords: [elems.northx.value, elems.northy.value, elems.northz.value], description: elems.north.value }
+  if (elems.east.value.trim() !== "") exits.east = { coords: [elems.eastx.value, elems.easty.value, elems.eastz.value], description: elems.east.value }
+  if (elems.south.value.trim() !== "") exits.south = { coords: [elems.southx.value, elems.southy.value, elems.southz.value], description: elems.south.value }
+  if (elems.west.value.trim() !== "") exits.west = { coords: [elems.westx.value, elems.westy.value, elems.westz.value], description: elems.west.value }
+
   var roomData = {
     name: elems.name.value,
     description: elems.description.value,
-    exits: {
-      north: elems.north.value,
-      east: elems.east.value,
-      south: elems.south.value,
-      west: elems.west.value
-    },
+    exits: exits,
     items: elems.items.value.split(/[^a-zA-Z0-9-_]+/)
   }
+  if (elems.items.value == "") roomData.items = [];
+  
   saveBox(currentRoom.x, currentRoom.y, currentRoom.z, roomData)
 }
 function deleteRoom() {
@@ -151,7 +155,26 @@ function selectBox(x, y, z) {
   } else {
     clearFields();
   }
+  setDefaultExits();
   hideDisplay();
+}
+
+function setDefaultExits() {
+  elems.northx.value = currentRoom.x;
+  elems.northy.value = currentRoom.y - 1;
+  elems.northz.value = currentRoom.z;
+
+  elems.eastx.value = currentRoom.x + 1;
+  elems.easty.value = currentRoom.y;
+  elems.eastz.value = currentRoom.z;
+
+  elems.southx.value = currentRoom.x;
+  elems.southy.value = currentRoom.y + 1;
+  elems.southz.value = currentRoom.z;
+
+  elems.westx.value = currentRoom.x - 1;
+  elems.westy.value = currentRoom.y;
+  elems.westz.value = currentRoom.z;
 }
 
 function setup() {
@@ -162,6 +185,19 @@ function setup() {
   elems.south = document.getElementById("south");
   elems.west = document.getElementById("west");
   elems.items = document.getElementById("items");
+  // well this is gonna be fun
+  elems.northx = document.getElementById("north-x");
+  elems.northy = document.getElementById("north-y");
+  elems.northz = document.getElementById("north-z");
+  elems.eastx = document.getElementById("east-x");
+  elems.easty = document.getElementById("east-y");
+  elems.eastz = document.getElementById("east-z");
+  elems.southx = document.getElementById("south-x");
+  elems.southy = document.getElementById("south-y");
+  elems.southz = document.getElementById("south-z");
+  elems.westx = document.getElementById("west-x");
+  elems.westy = document.getElementById("west-y");
+  elems.westz = document.getElementById("west-z");
 
   elems.defContent = document.getElementById("default");
   elems.editor = document.getElementById("editor");

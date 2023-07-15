@@ -3,24 +3,56 @@
     "passwd": "912ec803b2ce49e4a541068d495ab570",
     "race": "elf",
     "height": "tall",
-    "hairColor": "brown"
+    "hairColor": "brown",
+    "version": 1.6,
+    "room": [
+      0,
+      0,
+      1
+    ],
+    "inventory": [],
+    "admin": true
   },
   "asdf": {
     "passwd": "912ec803b2ce49e4a541068d495ab570",
     "race": "orc",
     "height": "short",
-    "hairColor": "silver"
+    "hairColor": "silver",
+    "version": 1.6,
+    "room": [
+      0,
+      0,
+      1
+    ],
+    "inventory": [],
+    "admin": false
   },
   "bennett": {
     "passwd": "cb42cfff91f4abb85a86018838be3151",
     "race": "unicorn",
     "height": "tall",
-    "hairColor": "silver"
+    "hairColor": "silver",
+    "version": 1.6,
+    "room": [
+      0,
+      0,
+      1
+    ],
+    "inventory": [],
+    "admin": false
   },
-  "fdsa": {
-    "passwd": "fc2baa1a20b4d5190b122b383d7449fd",
-    "race": "human",
-    "height": "average in height",
-    "hairColor": "red"
+  "saulita": {
+    "passwd": "912ec803b2ce49e4a541068d495ab570",
+    "race": "tortle",
+    "height": "very short",
+    "hairColor": "blonde",
+    "room": [
+      0,
+      0,
+      1
+    ],
+    "inventory": [],
+    "version": 1.6,
+    "admin": false
   }
 }

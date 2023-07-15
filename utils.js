@@ -43,3 +43,8 @@ process.sendmsg = function(message, callback, flags) {
     this.send(message);
   }, delay);
 }
+
+process.removeFromArray = function(array, item) {
+  var index = array.indexOf(item);
+  if (index > -1) array.splice(index, 1);
+}

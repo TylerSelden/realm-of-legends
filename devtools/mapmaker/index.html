@@ -125,7 +125,26 @@
       resize: vertical; /* Allow vertical resizing of the textarea */
     }
 
-    input[type="text"]:focus,
+    input[type="number"] {
+      padding: 8px;
+      border: 1px solid #333333;
+      background-color: #1e1e1e;
+      color: #ffffff;
+      border-radius: 4px;
+      transition: border-color 0.3s ease;
+      width: 30px;
+
+      -moz-appearance: textfield;
+    }
+    input::-webkit-outer-spin-button,
+    input::-webkit-inner-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+
+
+
+    input:focus,
     textarea:focus {
       outline: none;
       border-color: #4f4f4f;
@@ -210,15 +229,43 @@
         <div class="expandable-menu-content" id="exitsContent">
           <label class="expandable-menu-label" for="north">North: </label>
           <input type="text" id="north" placeholder="To the north...">
+          <label>(</label>
+          <input type="number" id="north-x" placeholder="X">
+          <label>,</label>
+          <input type="number" id="north-y" placeholder="Y">
+          <label>,</label>
+          <input type="number" id="north-z" placeholder="Z">
+          <label>)</label>
           <br>
           <label class="expandable-menu-label" for="east">East: </label>
           <input type="text" id="east" placeholder="To the east is a large...">
+          <label>(</label>
+          <input type="number" id="east-x" placeholder="X">
+          <label>,</label>
+          <input type="number" id="east-y" placeholder="Y">
+          <label>,</label>
+          <input type="number" id="east-z" placeholder="Z">
+          <label>)</label>
           <br>
           <label class="expandable-menu-label" for="south">South: </label>
           <input type="text" id="south" placeholder="To the south is a hidden...">
+          <label>(</label>
+          <input type="number" id="south-x" placeholder="X">
+          <label>,</label>
+          <input type="number" id="south-y" placeholder="Y">
+          <label>,</label>
+          <input type="number" id="south-z" placeholder="Z">
+          <label>)</label>
           <br>
           <label class="expandable-menu-label" for="west">West: </label>
           <input type="text" id="west" placeholder="To the west lies a...">
+          <label>(</label>
+          <input type="number" id="west-x" placeholder="X">
+          <label>,</label>
+          <input type="number" id="west-y" placeholder="Y">
+          <label>,</label>
+          <input type="number" id="west-z" placeholder="Z">
+          <label>)</label>
         </div>
       </div>
       <label for="items">Items: </label>

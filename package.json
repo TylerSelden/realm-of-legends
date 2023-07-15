@@ -9,6 +9,7 @@
   "author": "Tyler Selden",
   "license": "MIT",
   "dependencies": {
+    "circular-json": "^0.5.9",
     "crypto": "^1.0.1",
     "websocket": "^1.0.34"
   }
