@@ -1,3 +1,9 @@
+// i stole this from stack overflow
+
+window.onerror = function(error) {
+  alert("MapMaker encountered an error. It's *probably* not your fault.");
+};
+
 var canvas, ctx;
 
 var config = {

@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>MapMaker</title>
+  <title>MudPI MapMaker</title>
   <style>
     /* Dark mode styling */
     body {
@@ -270,7 +270,7 @@
 </head>
 <body>
   <div class="header-container">
-    <header>MapMaker</header>
+    <header>MUDPi MapMaker v1.3.3 Beta</header>
   </div>
   <div class="container">
     <canvas id="canvas" tabindex="1"></canvas>
@@ -286,7 +286,10 @@
         <p>To modify a room, click on it. This window should switch to the information you need to fill out for that room.
           Once the information is saved, that room's color will change on the grid, and the name of the room will be displayed
           beneath the coordinates.</p>
+        <p>Inside the room editor, you can modify coordinates, the room's name / description, and add Additionals. Additionals
+          are everything from signs to NPCs, and each have their own distinct configuration menu.</p>
         <p>To get started, click on a box to the left, or click the button below to upload an existing JSON file to edit.</p>
+        <p>DO NOT forget to download the JSON file when you're finished! Autosave is not (yet) implemented!</p>
       
         <button onclick="handleUpload()">Upload JSON</button>
         <button onclick="handleDownload()">Download JSON</button>
@@ -351,7 +354,6 @@
       <label for="additionals">Additionals: </label>
       <select id="additionals-select">
         <option>Sign</option>
-        <option>Other Item</option>
       </select>
 
       <button class="green singlechar" onclick="loadAdditional()">+</button>
