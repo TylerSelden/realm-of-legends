@@ -1,15 +1,61 @@
 // each keyword must not contain spaces!!
 var commands = [
   {
-    keywords: ["saveusers"],
+    keywords: ["n", "north"],
     func: (user, text) => {
-      if (!user.admin) {
-        user.connection.sendmsg("Your account does not have admin rights.", null, "l");
-        return;
+      if (process.getRoom(user).exits.north == undefined) {
+        return user.connection.sendmsg("You can't travel north.", null, "l");
       }
-      user.connection.sendmsg("Saving userdata...");
-      process.saveUsers();
-      user.connection.sendmsg("Userdata saved.", null, "l");
+
+      user.room[1]--;
+      user.connection.sendmsg("You travel north.");
+
+      process.sendRoomData(user, "l");
+    }
+  },
+  {
+    keywords: ["e", "east"],
+    func: (user, text) => {
+      if (process.getRoom(user).exits.east == undefined) {
+        return user.connection.sendmsg("You can't travel east.", null, "l");
+      }
+
+      user.room[0]++;
+      user.connection.sendmsg("You travel east.");
+
+      process.sendRoomData(user, "l");
+    }
+  },
+  {
+    keywords: ["s", "south"],
+    func: (user, text) => {
+      if (process.getRoom(user).exits.south == undefined) {
+        return user.connection.sendmsg("You can't travel south.", null, "l");
+      }
+
+      user.room[1]++;
+      user.connection.sendmsg("You travel south.");
+
+      process.sendRoomData(user, "l");
+    }
+  },
+  {
+    keywords: ["w", "west"],
+    func: (user, text) => {
+      if (process.getRoom(user).exits.west == undefined) {
+        return user.connection.sendmsg("You can't travel west.", null, "l");
+      }
+      user.room[1]--;
+      user.connection.sendmsg("You travel west.");
+
+      process.sendRoomData(user, "l");
+    }
+  },
+  {
+    keywords: ["quit", "exit"],
+    func: (user, text) => {
+      user.connection.sendmsg("\n\nThank you for playing The Tale of Ambia! Goodbye.");
+      setTimeout(() => {user.connection.close()}, 500);
     }
   },
   {
@@ -17,10 +63,11 @@ var commands = [
     func: (user, text) => {
       text = text.split(" ");
       text.shift();
-      if (text.length < 1) {
-        user.connection.sendmsg("you stupid", null, "l");
+      if (text.length < 1 || text[0] == "") {
+        user.connection.sendmsg("What would you like to read?", null, "l");
       } else {
-        user.connection.sendmsg(`You are reading: ${text.join(" ")}.`, null, "l");
+        console.log(text[1]);
+        user.connection.sendmsg(`You read it ig`, null, "l"); ////
       }
     }
   }

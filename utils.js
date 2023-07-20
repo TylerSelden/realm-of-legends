@@ -48,3 +48,23 @@ process.removeFromArray = function(array, item) {
   var index = array.indexOf(item);
   if (index > -1) array.splice(index, 1);
 }
+
+process.sendRoomData = function(user, flags, callback) {
+  if (callback !== undefined) callback = null;
+  
+  var room = process.getRoom(user);
+  console.log(room);
+  user.connection.sendmsg(`\n${room.name}:`);
+  user.connection.sendmsg(`${room.description}\n`);
+  user.connection.sendmsg(`Exits:`);
+  if (room.exits.north !== undefined) user.connection.sendmsg(room.exits.north.description);
+  if (room.exits.east !== undefined) user.connection.sendmsg(room.exits.east.description);
+  if (room.exits.south !== undefined) user.connection.sendmsg(room.exits.south.description);
+  if (room.exits.west !== undefined) user.connection.sendmsg(room.exits.west.description);
+
+  user.connection.sendmsg('', callback, flags);
+}
+
+process.getRoom = function(user) {
+  return process.rooms[user.room[0]][user.room[1]][user.room[2]];
+}

@@ -204,9 +204,12 @@ process.login = [
       connection.sendmsg(`Logging in...\n`);
       process.users[connection.username] = new Character(connection.passwd, connection.race, connection.height, connection.hairColor);
       process.users[connection.username].connection = connection;
-      process.saveUsers();
+
+      //// for dev
+      // process.saveUsers();
+      if (connection.username !== "test") process.saveUsers();
       
-      process.start(connection);
+      firstStart(connection);
     } else {
       connection.sendmsg('\n' + process.art.racelist, process.login[5], "l");
     }
@@ -237,15 +240,34 @@ function ynChoice(connection, text, index, invalidMsg) {
   }
 }
 
-process.getRoom = function(user) {
-  return process.rooms[user.room[0]][user.room[1]][user.room[2]];
+function firstStart(connection) {
+  connection.sendmsg(`${'\n'.repeat(81)}`);
+
+  setTimeout(() => {
+    connection.sendmsg("~ A game by Benti Studios ~");
+    setTimeout(() => {
+      connection.sendmsg("Welcome to...");
+      setTimeout(() => {
+        connection.sendmsg(process.art.title0);
+        setTimeout(() => {
+          connection.sendmsg(process.art.title1);
+          setTimeout(() => {
+            connection.sendmsg(process.art.title2);
+            setTimeout(() => {
+              process.start(connection);
+            }, 6000);
+          }, 500);
+        }, 500);
+      }, 4000);
+    }, 4000);
+  }, 2000);
 }
 
 process.start = function(connection) {
   // ok so the game should like actually start here
 
   // give them a description of the room they're in
-  connection.sendmsg(`\n${'='.repeat(81)}\n${process.getRoom(process.users[connection.username]).description}\n`, handleInput, "lv");
+  process.sendRoomData(process.users[connection.username], "lv", process.handleInput);
 }
 
 process.saveUsers = function() {

@@ -100,7 +100,8 @@ function saveRoom() {
     name: elems.name.value,
     description: elems.description.value,
     exits: exits,
-    items: elems.items.value.split(/[^a-zA-Z0-9-_]+/)
+    items: elems.items.value.split(/[^a-zA-Z0-9-_]+/),
+    additionals: additionals
   }
   if (elems.items.value == "") roomData.items = [];
   
@@ -139,6 +140,39 @@ function clearFields() {
   elems.south.value = "";
   elems.west.value = "";
   elems.items.value = "";
+
+  additionals = [];
+  elems.add.innerHTML = "";
+}
+
+function loadCoords(room) {
+  if (room.exits.north !== undefined) {
+    elems.north.value = room.exits.north.description;
+    elems.northx.value = room.exits.north.coords[0];
+    elems.northy.value = room.exits.north.coords[1];
+    elems.northz.value = room.exits.north.coords[2];
+  } else setDefaultExits(0);
+
+  if (room.exits.east !== undefined) {
+    elems.east.value = room.exits.east.description;
+    elems.eastx.value = room.exits.east.coords[0];
+    elems.easty.value = room.exits.east.coords[1];
+    elems.eastz.value = room.exits.east.coords[2];
+  } else setDefaultExits(1);
+
+  if (room.exits.south !== undefined) {
+    elems.south.value = room.exits.south.description;
+    elems.southx.value = room.exits.south.coords[0];
+    elems.southy.value = room.exits.south.coords[1];
+    elems.southz.value = room.exits.south.coords[2];
+  } else setDefaultExits(2);
+
+  if (room.exits.west !== undefined) {
+    elems.west.value = room.exits.west.description;
+    elems.westx.value = room.exits.west.coords[0];
+    elems.westy.value = room.exits.west.coords[1];
+    elems.westz.value = room.exits.west.coords[2];
+  } else setDefaultExits(3);
 }
 
 function selectBox(x, y, z) {
@@ -147,34 +181,41 @@ function selectBox(x, y, z) {
     var room = data[x][y][z];
     elems.name.value = room.name;
     elems.description.value = room.description;
-    elems.north.value = room.exits.north;
-    elems.east.value = room.exits.east;
-    elems.south.value = room.exits.south;
-    elems.west.value = room.exits.west;
+    loadCoords(room);
     elems.items.value = room.items.join(", ");
+
+    loadAdditionals(room);
   } else {
     clearFields();
   }
-  setDefaultExits();
+  // setDefaultExits();
   hideDisplay();
 }
 
-function setDefaultExits() {
-  elems.northx.value = currentRoom.x;
-  elems.northy.value = currentRoom.y - 1;
-  elems.northz.value = currentRoom.z;
+function setDefaultExits(dir) {
+  if (dir == 0) {
+    elems.northx.value = currentRoom.x;
+    elems.northy.value = currentRoom.y - 1;
+    elems.northz.value = currentRoom.z;
+  }
 
-  elems.eastx.value = currentRoom.x + 1;
-  elems.easty.value = currentRoom.y;
-  elems.eastz.value = currentRoom.z;
+  if (dir == 1) {
+    elems.eastx.value = currentRoom.x + 1;
+    elems.easty.value = currentRoom.y;
+    elems.eastz.value = currentRoom.z;
+  }
 
-  elems.southx.value = currentRoom.x;
-  elems.southy.value = currentRoom.y + 1;
-  elems.southz.value = currentRoom.z;
-
-  elems.westx.value = currentRoom.x - 1;
-  elems.westy.value = currentRoom.y;
-  elems.westz.value = currentRoom.z;
+  if (dir == 2) {
+    elems.southx.value = currentRoom.x;
+    elems.southy.value = currentRoom.y + 1;
+    elems.southz.value = currentRoom.z;
+  }
+  
+  if (dir == 3) {
+    elems.westx.value = currentRoom.x - 1;
+    elems.westy.value = currentRoom.y;
+    elems.westz.value = currentRoom.z;
+  }
 }
 
 function setup() {
@@ -201,6 +242,12 @@ function setup() {
 
   elems.defContent = document.getElementById("default");
   elems.editor = document.getElementById("editor");
+
+  elems.add = document.getElementById("additionals");
+  elems.addSel = document.getElementById("additionals-select");
+  elems.addCfg = document.getElementById("additional-config");
+  elems.addName = document.getElementById("additional-name");
+
   canvas.addEventListener("mousedown", (event) => {
     camera.mousedown = true;
     var rect = canvas.getBoundingClientRect();
@@ -331,5 +378,77 @@ function drawBox(x, y, w, h, coordX, coordY) {
     ctx.fillText(`${roomName}`, x + w / 2, y + (2/3 * h));
   } else {
     ctx.fillText(`(${coordX}, ${coordY}, ${camera.layer})`, x + w / 2, y + h / 2);
+  }
+}
+
+var additionals = [];
+
+function addElement(name, id) {
+  var br = "";
+  if (!elems.add.innerHTML.endsWith("<br>\n") && elems.add.innerHTML !== "") br = "<br>\n";
+
+  // i know this is really bad practice but i don't really care that much
+  elems.add.innerHTML += `${br}<button class="expandable-menu-button" onclick="loadAdditional(${id})">${name}</button>\n<button class="red singlechar" onclick="removeAdditional(${id})">-</button><br>\n`
+}
+
+var additionalsFuncs = {
+  "Sign": {
+    add: () => {
+      var textbox = document.getElementById("Sign.text");
+      var index = additionals.length;
+      additionals.push({type: "Sign", data: textbox.value});
+      textbox.value = "";
+      
+      addElement("Sign", index);
+    },
+    load: (id) => {
+      var textbox = document.getElementById("Sign.text");
+      textbox.value = additionals[id].data;
+    },
+    reload: (id) => {
+      addElement("Sign", id);
+    }
+  }
+}
+
+function loadAdditional(id) {
+  var add = elems.addSel.value;
+  elems.addCfg.style = "";
+  elems.addName.innerText = `Add a ${add}:`;
+  document.getElementById(add).style = "";
+
+  if (id !== undefined) additionalsFuncs[add].load(id);
+}
+
+function addAdditional() {
+  var add = elems.addSel.value;
+  elems.addCfg.style = "display: none;";
+  document.getElementById(add).style = "display: none;";
+
+  additionalsFuncs[add].add();
+}
+
+function removeAdditional(id) {
+  if (additionals.length > 1) {
+    additionals.splice(id, 1) 
+  } else {
+    additionals = [];
+  }
+  //remove that stupid element
+  var split = elems.add.innerHTML.split("<br>");
+  split.pop(); // remove the last (empty) one
+
+  split.splice(id, 1);
+
+  elems.add.innerHTML = split.join("<br>");
+}
+
+function loadAdditionals(room) {
+
+  additionals = room.additionals;
+  elems.add.innerHTML = "";
+  
+  for (var i in additionals) {
+    additionalsFuncs[additionals[i].type].reload(i);
   }
 }

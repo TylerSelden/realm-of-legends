@@ -94,7 +94,6 @@
       socket.onmessage = function (event) {
         var message = event.data;
         displayMessage(message);
-        console.log(message);
       };
 
       socket.onclose = function () {
@@ -111,7 +110,7 @@
       var content = document.getElementById("content");
       var isScrolledToBottom = content.scrollHeight - content.clientHeight <= content.scrollTop + 1;
       var codeElement = document.getElementById("codeElement");
-      message = message.replace(/\n/g, "\n&#8203;"); // zero-width space after newlines, so newlines with nothing after them will still be displayed
+      message = message.replace(/\n/g, "\n&#8203;");
       codeElement.innerHTML += message;
       if (isScrolledToBottom) {
         content.scrollTop = content.scrollHeight; // Scroll to bottom
