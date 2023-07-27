@@ -87,6 +87,7 @@
       border-radius: 4px;
       cursor: pointer;
       vertical-align: middle;
+      transition: background-color 0.2s ease;
     }
 
     .singlechar {
@@ -120,11 +121,11 @@
       background-color: #2f8f2f;
     }
 
-    .green:hover {
+    .green:hover, .save:hover {
       background-color: #1a9f1a;
     }
 
-    .green:active {
+    .green:active, .save:active {
       background-color: #2a7f2a;
     }
 
@@ -269,7 +270,7 @@
 </head>
 <body>
   <div class="header-container">
-    <header>MUDPi MapMaker v1.3.3 Beta</header>
+    <header>MUDPi MapMaker v1.3.4 Beta</header>
   </div>
   <div class="container">
     <canvas id="canvas" tabindex="1"></canvas>
@@ -375,7 +376,7 @@
 
       <br><br>
 
-      <button onclick="saveRoom()">Save</button>
+      <button onclick="saveRoom()" class="save">Save</button>
       <button onclick="deleteRoom()" class="red">Delete</button>
       <br><br>
       <button onclick="showDisplay()">Back</button>

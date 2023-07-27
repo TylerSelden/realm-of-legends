@@ -14,7 +14,13 @@
             "description": "To the north, a winding trail leads downhill into a small, quaint town."
           }
         },
-        "items": []
+        "items": [],
+        "additionals": [
+          {
+            "type": "Sign",
+            "data": "I really, truly hope this works."
+          }
+        ]
       }
     },
     "-1": {
@@ -22,6 +28,14 @@
         "name": "Winding Trail",
         "description": "A winding path leads north through rolling hills and dense forests. The air is crisp and clean, with the scent of wildflowers and damp earth. Ahead of you, the path opens up into a small town.",
         "exits": {
+          "north": {
+            "coords": [
+              "0",
+              "-2",
+              "1"
+            ],
+            "description": "To the north, a winding trail leads downhill into a small, quaint town."
+          },
           "south": {
             "coords": [
               "0",
@@ -31,7 +45,8 @@
             "description": "To the south is a beautiful hilltop, overlooking all of Ambia."
           }
         },
-        "items": []
+        "items": [],
+        "additionals": []
       }
     }
   }
