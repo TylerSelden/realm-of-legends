@@ -52,7 +52,7 @@ var commands = [
     }
   },
   {
-    keywords: ["quit", "exit"],
+    keywords: ["quit"],
     func: (user, text) => {
       user.connection.sendmsg("\n\nThank you for playing The Tale of Ambia! Goodbye.");
       setTimeout(() => {user.connection.close()}, 500);
@@ -61,13 +61,22 @@ var commands = [
   {
     keywords: ["look", "examine", "read"],
     func: (user, text) => {
-      text = text.split(" ");
+      text = text.trim().split(" ");
       text.shift();
-      if (text.length < 1 || text[0] == "") {
+      if (text.length < 1) {
         user.connection.sendmsg("What would you like to read?", null, "l");
       } else {
-        console.log(text[1]);
-        user.connection.sendmsg(`You read it ig`, null, "l"); ////
+        text = text.join(" ").replace(/the |an |a /g, "").toLowerCase();
+        var room = process.getRoom(user);
+        var additionals = room.additionals.map(a => a.type);
+        var readable = process.fuzzyFindIndex(text, additionals);
+
+        if (readable !== null) {
+          user.connection.sendmsg(`You read ${text}.`);
+          user.connection.sendmsg(room.additionals[readable].data, null, "l");
+        } else {
+          user.connection.sendmsg(`You can't read that.`, null, "l");
+        }
       }
     }
   }

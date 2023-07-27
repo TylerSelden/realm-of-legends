@@ -402,7 +402,7 @@ var additionalsFuncs = {
     add: () => {
       var textbox = document.getElementById("Sign.text");
       var index = additionals.length;
-      additionals.push({type: "Sign", data: textbox.value});
+      additionals.push({type: "sign", data: textbox.value});
       textbox.value = "";
       
       addElement("Sign", index);

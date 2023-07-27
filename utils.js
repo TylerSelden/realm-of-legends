@@ -53,7 +53,7 @@ process.sendRoomData = function(user, flags, callback) {
   if (callback !== undefined) callback = null;
   
   var room = process.getRoom(user);
-  console.log(room);
+  
   user.connection.sendmsg(`\n${room.name}:`);
   user.connection.sendmsg(`${room.description}\n`);
   user.connection.sendmsg(`Exits:`);
