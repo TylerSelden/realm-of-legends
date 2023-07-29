@@ -270,7 +270,7 @@
 </head>
 <body>
   <div class="header-container">
-    <header>MUDPi MapMaker v1.3.4 Beta</header>
+    <header>MUDPi MapMaker v1.4.0 Beta</header>
   </div>
   <div class="container">
     <canvas id="canvas" tabindex="1"></canvas>
@@ -289,10 +289,15 @@
         <p>Inside the room editor, you can modify coordinates, the room's name / description, and add Additionals. Additionals
           are everything from signs to NPCs, and each have their own distinct configuration menu.</p>
         <p>To get started, click on a box to the left, or click the button below to upload an existing JSON file to edit.</p>
-        <p>DO NOT forget to download the JSON file when you're finished! Autosave is not (yet) implemented!</p>
+        <p>DO NOT forget to download the JSON file when you're finished! Autosave should not be relied upon.</p>
       
         <button onclick="handleUpload()">Upload JSON</button>
         <button onclick="handleDownload()">Download JSON</button>
+        <br><br>
+        <button onclick="autoDelete()" class="red">Delete Autosave Data</button>
+        <br><br>
+        <h3>Release notes:</h3>
+        <p><strong>1.4.0:</strong> Added release notes and autosave.</p>
      </div>
      <div id="editor" style="display: none;">
       <h2>JSON Room Editor</h2>

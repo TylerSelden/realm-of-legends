@@ -74,6 +74,8 @@ window.onload = function() {
 
   setup();
 
+  autoLoad();
+
   renderloop();
 }
 
@@ -117,6 +119,24 @@ function deleteRoom() {
   deleteBox(currentRoom.x, currentRoom.y, camera.layer);
 }
 
+function autoSave() {
+  localStorage.setItem("data", JSON.stringify(data));
+}
+
+function autoLoad() {
+  var storage = JSON.parse(localStorage.getItem("data"));
+  if (storage !== null) return data = storage;
+  
+  alert("No autosave data was found. Creating autosave data....");
+  localStorage.setItem("data", JSON.stringify(data));
+}
+
+function autoDelete() {
+  if (!confirm("Are you sure you want to delete all autosave data? It cannot be recovered! (This will also delete all current progress)")) return;
+  localStorage.removeItem("data");
+  data = {};
+  alert("Autosave data was deleted.");
+}
 
 function showDisplay() {
   elems.defContent.style = "";
@@ -131,6 +151,8 @@ function saveBox(x, y, z, roomData) {
   if (data[x] == undefined) data[x] = {};
   if (data[x][y] == undefined) data[x][y] = {};
   data[x][y][z] = roomData;
+
+  autoSave();
 }
 function deleteBox(x, y, z) {
   delete data[x][y][z];
