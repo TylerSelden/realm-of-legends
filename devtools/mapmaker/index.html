@@ -270,7 +270,7 @@
 </head>
 <body>
   <div class="header-container">
-    <header>MUDPi MapMaker v1.4.0 Beta</header>
+    <header>MUDPi MapMaker v2.0.0</header>
   </div>
   <div class="container">
     <canvas id="canvas" tabindex="1"></canvas>
@@ -291,13 +291,14 @@
         <p>To get started, click on a box to the left, or click the button below to upload an existing JSON file to edit.</p>
         <p>DO NOT forget to download the JSON file when you're finished! Autosave should not be relied upon.</p>
       
-        <button onclick="handleUpload()">Upload JSON</button>
-        <button onclick="handleDownload()">Download JSON</button>
+        <button onclick="handleUpload()" >Upload JS</button>
+        <button onclick="handleDownload()" class="save">Download JS</button>
         <br><br>
         <button onclick="autoDelete()" class="red">Delete Autosave Data</button>
         <br><br>
         <h3>Release notes:</h3>
         <p><strong>1.4.0:</strong> Added release notes and autosave.</p>
+        <p><strong>2.0.0:</strong> Moved out of beta! Removed additionals, and put notes in place of it. All additionals will be added by hand later in the development process. Also, MapMaker will now export as a JS file, not JSON, to support room functions. The Ambia engine supports these now, and JSON files are depracated.</p>
      </div>
      <div id="editor" style="display: none;">
       <h2>JSON Room Editor</h2>
@@ -353,33 +354,12 @@
           <label>)</label>
         </div>
       </div>
-      <label for="items">Items: </label>
-      <input type="text" id="items" placeholder="sword, shield, potion"><br><br>
-
-      <label for="additionals">Additionals: </label>
-      <select id="additionals-select">
-        <option>Sign</option>
-      </select>
-
-      <button class="green singlechar" onclick="loadAdditional()">+</button>
-
-      <div id="additional-config" class="additional" style="display: none;">
-        <h3 id="additional-name">Add a sign:</h3>
-        <div id="Sign" style="display: none;">
-          <div class="textarea-label">
-            <span>Sign text:</span>
-            <textarea id="Sign.text" placeholder="To read signs, type the 'read' command..."></textarea>
-          </div>
-        </div>
-        <br>
-        <button class="green" onclick="addAdditional()">Add</button>
+      <div class="textarea-label">
+        <span>Notes:</span>
+        <textarea id="notes" placeholder="Add *any and all* additional details here."></textarea>
       </div>
 
-      <br><br>
-      <h3>Current additionals:</h3>
-      <div id="additionals"></div>
-
-      <br><br>
+      <br>
 
       <button onclick="saveRoom()" class="save">Save</button>
       <button onclick="deleteRoom()" class="red">Delete</button>
@@ -389,6 +369,7 @@
     </div>
   </div>
 
+  <script src="additionals.js"></script>
   <script src="script.js"></script>
   <script>
     function toggleExits() {

@@ -10,6 +10,8 @@ require('./users.js')
 // var { loadRooms, rooms, handleInput } = require('./rooms.js')
 require('./rooms.js');
 
+require('./rooms/data.js');
+
 
 var port = 8080;
 

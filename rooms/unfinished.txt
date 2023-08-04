@@ -1,0 +1,6 @@
+(0, 0, 1): Hilltop
+Notes: Add a sign that the player can read that explains the basics of how to move.
+
+(0, -1, 1): Winding Trail
+Notes: 
+

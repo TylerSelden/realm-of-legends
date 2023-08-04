@@ -6,9 +6,27 @@ const commands = require('./commands.js');
 process.rooms = {};
 
 process.loadRooms = function() {
-  console.log("Loading rooms...");
-  var savestr = fs.readFileSync("./rooms/data.json");
-  process.rooms = JSON.parse(savestr);
+  console.log("Processing rooms...");
+  // var savestr = fs.readFileSync("./rooms/data.json");
+  // process.rooms = JSON.parse(savestr);
+  var unfinishedRooms = "";
+  var unfinishedNumber = 0;
+  for (var x in process.rooms) {
+    for (var y in process.rooms[x]) {
+      for (var z in process.rooms[x][y]) {
+        var room = process.rooms[x][y][z];
+        if (room.unfinished) {
+          unfinishedRooms += `(${x}, ${y}, ${z}): ${room.name}\nNotes: ${room.notes}\n\n`;
+          unfinishedNumber++;
+        }
+      }
+    }
+  }
+  console.log(`==============================================
+  Unfinished rooms: ${unfinishedNumber}.
+  Check ./rooms/unfinished.txt
+==============================================`);
+  fs.writeFileSync('./rooms/unfinished.txt', unfinishedRooms);
   console.log("Rooms loaded successfully.");
 }
 
