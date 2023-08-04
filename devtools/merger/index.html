@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MudPI File Merger</title>
+  <style>
+    /* Dark mode styling */
+    body {
+      background-color: #1e1e1e;
+      color: #fff;
+      margin: 0;
+      padding: 0;
+      font-family: Arial, sans-serif;
+      overflow-x: hidden;
+    }
+
+    /* Container for the main content */
+    .container {
+      position: absolute;
+      display: flex;
+      width: 100%;
+      align-items: flex-start;
+      height: 95vh;
+      bottom: 0;
+    }
+
+    /* Left side canvas */
+    canvas {
+      width: 50%;
+      height: 100%; /* Subtract height of header container */
+      background-color: #252525;
+    }
+    canvas:focus {
+      outline: none;
+    }
+
+    /* Right side content */
+    .content {
+      width: 50%;
+      height: 100%; /* Subtract height of header container */
+      padding: 20px;
+      box-sizing: border-box;
+      line-height: 1.5;
+    }
+
+    /* Container for the header */
+    .header-container {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: calc(100vw - 20px);
+      background-color: #1e1e1e;
+      height: 5vh;
+      display: flex;
+      align-items: center;
+      padding-left: 20px;
+    }
+
+    /* Header styling */
+    header {
+      font-size: 24px;
+      font-weight: bold;
+      margin: 0;
+    }
+
+    /* Button styling */
+    /* button {
+      display: inline-block;
+      padding: 10px 20px;
+      font-size: 16px;
+      background-color: #3f3f3f;
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      margin-top: 10px;
+    } */
+
+    button {
+      display: inline-block;
+      padding: 10px 20px;
+      font-size: 16px;
+      background-color: #3f3f3f;
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      vertical-align: middle;
+      transition: background-color 0.2s ease;
+    }
+
+    .singlechar {
+      padding: 0 5px;
+      font-size: 30px;
+      width: 30px;
+      height: 30px;
+    }
+
+    button:hover {
+      background-color: #4f4f4f;
+    }
+
+    button:active {
+      background-color: #565656;
+    }
+
+    .red {
+      background-color: #bf3f3f;
+    }
+
+    .red:hover {
+      background-color: #aa2a2a;
+    }
+
+    .red:active {
+      background-color: #aa1a1a;
+    }
+
+    .green {
+      background-color: #2f8f2f;
+    }
+
+    .green:hover, .save:hover {
+      background-color: #1a9f1a;
+    }
+
+    .green:active, .save:active {
+      background-color: #2a7f2a;
+    }
+
+    /* Text styling */
+    h2, h3 {
+      color: #ffffff;
+    }
+
+    p {
+      color: #cccccc;
+      margin-bottom: 15px;
+    }
+
+    /* Text input styling */
+    textarea {
+      height: 80px;
+    }
+
+    input[type="text"],
+    textarea {
+      width: 50%;
+      padding: 8px;
+      margin: 5px;
+      border: 1px solid #333333;
+      background-color: #1e1e1e;
+      color: #ffffff;
+      border-radius: 4px;
+      transition: border-color 0.3s ease;
+      resize: vertical; /* Allow vertical resizing of the textarea */
+    }
+
+    input[type="number"] {
+      padding: 8px;
+      border: 1px solid #333333;
+      background-color: #1e1e1e;
+      color: #ffffff;
+      border-radius: 4px;
+      transition: border-color 0.3s ease;
+      width: 30px;
+
+      -moz-appearance: textfield;
+    }
+    input::-webkit-outer-spin-button,
+    input::-webkit-inner-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+
+
+
+    input:focus,
+    textarea:focus {
+      outline: none;
+      border-color: #4f4f4f;
+    }
+
+    /* Custom styling for textarea label */
+    .textarea-label {
+      display: flex;
+      align-items: center;
+    }
+
+    .textarea-label span {
+      margin-right: 10px;
+      white-space: nowrap;
+    }
+
+    /* Expandable menu styling */
+    .expandable-menu {
+      margin-bottom: 15px;
+    }
+
+    .expandable-menu-button {
+      background-color: transparent;
+      border: none;
+      color: #ffffff;
+      cursor: pointer;
+      font-size: 16px;
+      margin: 5px 0;
+      padding: 0;
+      text-decoration: underline;
+    }
+
+    .expandable-menu-content {
+      margin-left: 25px;
+      display: none;
+    }
+
+    .expandable-menu-content.show {
+      display: block;
+    }
+
+    .expandable-menu-label {
+      margin-top: 10px;
+    }
+
+    /* Custom styling for select element */
+    select {
+      padding: 8px;
+      margin: 5px;
+      border: 1px solid #333333;
+      background-color: #1e1e1e;
+      color: #ffffff;
+      border-radius: 4px;
+      transition: border-color 0.3s ease;
+      width: 20%;
+      background-repeat: no-repeat;
+      background-position: right center;
+    }
+    
+    /* Hover and focus styles for select element */
+    select:hover,
+    select:focus {
+      outline: none;
+      border-color: #4f4f4f;
+    }
+
+    .additional {
+      margin-left: 20px;
+      border-left: 2px solid #333333;
+      padding: 10px;
+    }
+
+    #additional-name {
+      margin-top: 0;
+    }
+
+    #additionals {
+      margin-left: 10px;
+      border-left: 2px solid #333333;
+      padding: 10px;
+    }
+    
+    #additionals .expandable-menu-button {
+      margin-right: 5px;
+    }
+
+    #additionals button {
+      margin-bottom: 10px;
+    }
+  </style>
+</head>
+<body>
+  <div class="header-container">
+    <header>MUDPi File Merger</header>
+  </div>
+  <div class="container">
+    <div class="content">
+    <button id="upload" onclick="handleUpload()" class="green">Begin</button>
+    <br>
+    <p>Upload the game file FIRST, then upload the new file.</p>
+  </div>
+  </div>
+  <script src="script.js"></script>
+</body>
+</html>
