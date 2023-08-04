@@ -59,7 +59,7 @@ function handleUpload() {
 }
 
 function handleDownload() {
-  var jsonString = `// The Rooms :/\n\nprocess.rooms = ${JSON.stringify(data, null, 2)};`;
+  var jsonString = `// The Rooms :/\n\nprocess.rooms = ${JSON.stringify(data, null, 2).replace(/"([^"\d]+)":/g, '$1:').replace(/"(-?\d+)",/g, '$1,').replace(/"(-?\d+)"\n/g, '$1\n')};`;
   var blob = new Blob([jsonString], { type: "text/js" });
 
   var a = document.createElement("a");
