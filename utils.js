@@ -110,39 +110,16 @@ process.sendmsg = function (message, callback, flags) {
     // ok
     // i think i'm ready
     // let's do this
-    if (colorElems !== null) message = message.replace(/<[^<>]*>/g, "​") // WARNING!! there is a zero-width space in that string (if using vscode, install gremlins ext.)
     // replace all HTML elements with zero-width spaces
-
-    // let's get rid of that hunka
-    // var broken = message.split('\n');
-    // message = "";
-    // for (var i = 0; i < broken.length; i++) {
-    //   var line = broken[i];
-    //   var visibleLineLength = visibleLength(line);
-    //   var excess = line.length - visibleLineLength;
-
-    //   while (visibleLineLength > 81) {
-    //     var index = line.lastIndexOf(" ", 81 + excess);
-    //     if (index === -1) {
-    //       // No space found within 81 + excessHTMLLength characters, force split at 81 (leave HTML)
-    //       index = 80 + excess;
-    //       broken[i] = line.substring(0, index) + '\n' + line.substring(index);
-    //     } else {
-    //       broken[i] = line.substring(0, index) + '\n' + line.substring(index + 1);
-    //       console.log(line.substring(0, index) + '\n' + line.substring(index + 1) + '\n\n');
-    //     }
-    //     message += line.substring(0, index + 1);
-    //     line = line.substring(index + 1);
-    //     visibleLineLength = visibleLength(line);
-    //   }
-    // }
+    if (colorElems !== null) message = message.replace(/<[^<>]*>/g, "​") // WARNING!! there is a zero-width space in that string (if using vscode, install gremlins ext.)
 
     var broken = message.split('\n');
-    for (var i in broken) {
+    var i = 0;
+    while (i < broken.length) {
       var line = broken[i];
-      if (line.length > 81) {
+      var excess = line.length - visibleLength(line);
+      if (line.length > 81 + excess) {
         var index = line.lastIndexOf(" ", 81);
-        var excess = line.length - visibleLength(line);
         if (index < 0) {
           index = 80 + excess;
           broken[i] = broken[i].substring(0, index) + '\n' + broken[i].substring(index);
@@ -152,9 +129,11 @@ process.sendmsg = function (message, callback, flags) {
         // Split the array again to prevent extra-long lines
         broken = broken.join('\n').split('\n');
         i = 0; // Restart the loop
+      } else {
+        i++; // Move to the next line if no break is needed
       }
     }
-
+    
     message = broken.join('\n');
     // put HTML back in
     if (colorElems !== null) {
