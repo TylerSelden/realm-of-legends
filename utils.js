@@ -1,4 +1,52 @@
-process.sendmsg = function(message, callback, flags) {
+const {red, green, blue, yellow, white} = require('./colors.js');
+
+// process.sendmsg = function(message, callback, flags) {
+//   if (flags == undefined) flags = "";
+//   /*
+//     flags:
+//     n: NO newline after message
+//     l: unlock account
+//     d3000: delay 3000 ms
+//     v: validate connection
+//     i: hide input symbol
+//   */
+//   var delay = 0;
+//   if (flags.includes('d')) delay = parseInt(flags.match(/d(\d+)/)[1]);
+//   if (flags.includes('v')) this.validated = true;
+
+//   if (typeof(callback) == "function") this.callback = callback;
+
+//   setTimeout(() => {
+//     // this.send(message);
+//     if (!flags.includes('n')) {
+//       // this.send(`\n`);
+//       message += '\n';
+//     }
+//     if (flags.includes('l')) {
+//       this.locked = false;
+//       if (!flags.includes('n')) /* this.send("> "); */ message += "> ";
+//     }
+
+//     // break message into line-sized pieces
+//     var broken = message.split('\n');
+//     for (var i = 0; i < broken.length; i++) {
+//       if (broken[i].length > 81) {
+//         var index = broken[i].lastIndexOf(" ", 81);
+//         broken[i] = broken[i].substring(0, index) + '\n' + broken[i].substring(index + 1);
+    
+//         // Split the array again to prevent extra-long lines
+//         broken = broken.join('\n').split('\n');
+//         i = 0; // Restart the loop
+//       }
+//     }
+    
+    
+//     message = broken.join('\n');
+//     this.send(message);
+//   }, delay);
+// }
+
+process.sendmsg = function (message, callback, flags) {
   if (flags == undefined) flags = "";
   /*
     flags:
@@ -7,12 +55,16 @@ process.sendmsg = function(message, callback, flags) {
     d3000: delay 3000 ms
     v: validate connection
     i: hide input symbol
+    w: DO NOT start message with closing color tag (white)
   */
   var delay = 0;
   if (flags.includes('d')) delay = parseInt(flags.match(/d(\d+)/)[1]);
   if (flags.includes('v')) this.validated = true;
 
-  if (typeof(callback) == "function") this.callback = callback;
+  if (typeof (callback) == "function") this.callback = callback;
+
+  const stripHTML = (str) => str.replace(/<[^>]*>?/gm, '');
+  const visibleLength = (str) => stripHTML(str).length;
 
   setTimeout(() => {
     // this.send(message);
@@ -20,29 +72,56 @@ process.sendmsg = function(message, callback, flags) {
       // this.send(`\n`);
       message += '\n';
     }
+
+    // this effectively resets the color at the end of a line automatically, unless flag w
+    // if there is no closing color tag, and flag n, continue the color through the next message  
+    if (this.continueColor !== undefined) {
+      message = message.replace(/^/, this.continueColor);
+      this.continueColor = true;
+    }
+    if (!flags.includes('w')) {
+      var colorElems = message.match(/<[^<>]*>/g);
+      if (colorElems !== null && colorElems[colorElems.length - 1] !== white) {
+        message += white;
+        if (flags.includes('n')) this.continueColor = colorElems[colorElems.length - 1];
+      }
+    }
+    // must be true so the first time it's set, it isn't affected.
+    if (this.continueColor == true) {
+      message += white;
+      this.continueColor = undefined;
+    }
+
     if (flags.includes('l')) {
       this.locked = false;
       if (!flags.includes('n')) /* this.send("> "); */ message += "> ";
     }
 
-    //break message into line-sized pieces
+    // break message into line-sized pieces
     var broken = message.split('\n');
     for (var i = 0; i < broken.length; i++) {
-      if (broken[i].length > 81) {
-        var index = broken[i].lastIndexOf(" ", 81);
-        broken[i] = broken[i].substring(0, index) + '\n' + broken[i].substring(index + 1);
-    
-        // Split the array again to prevent extra-long lines
-        broken = broken.join('\n').split('\n');
-        i = 0; // Restart the loop
+      var line = broken[i];
+      var visibleLineLength = visibleLength(line);
+      var originalLineLength = line.length;
+      var excessHTMLLength = originalLineLength - visibleLineLength;
+
+      while (visibleLineLength > 81) {
+        var index = line.lastIndexOf(" ", 81 + excessHTMLLength);
+        if (index === -1) {
+          // No space found within 81 + excessHTMLLength characters, force split without considering HTML
+          index = 81 + excessHTMLLength;
+        }
+        broken[i] = line.substring(0, index) + '\n' + line.substring(index + 1);
+        line = line.substring(index + 1);
+        visibleLineLength = visibleLength(line);
       }
     }
-    
-    
+
     message = broken.join('\n');
     this.send(message);
   }, delay);
-}
+};
+
 
 process.removeFromArray = function(array, item) {
   var index = array.indexOf(item);
@@ -54,7 +133,7 @@ process.sendRoomData = function(user, flags, callback) {
   
   var room = process.getRoom(user);
   
-  user.connection.sendmsg(`\n${room.name}:`);
+  user.connection.sendmsg(`\n${red}${room.name}:${white}`);
   user.connection.sendmsg(`${room.description}\n`);
   user.connection.sendmsg(`Exits:`);
   if (room.exits.north !== undefined) user.connection.sendmsg(room.exits.north.description);
@@ -67,4 +146,8 @@ process.sendRoomData = function(user, flags, callback) {
 
 process.getRoom = function(user) {
   return process.rooms[user.room[0]][user.room[1]][user.room[2]];
+}
+
+process.capitalizeFirst = function(string) {
+  return string.charAt(0).toUpperCase() + string.slice(1);
 }

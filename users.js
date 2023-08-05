@@ -6,6 +6,7 @@ const { stringify, parse } = require('circular-json');
 require('./art.js');
 var { loadRooms, rooms, handleInput } = require('./rooms.js')
 
+const {red, green, blue, yellow, white} = require('./colors.js');
 
 process.connectedUsers = [];
 process.users = {};
@@ -40,27 +41,27 @@ const heights = ["very tall", "tall", "average in height", "short", "very short"
 const races = [
   {
     name: "human",
-    description: "Versatile and adaptable, humans possess a diverse range of skills and abilities, making them capable of excelling in various roles within the land. Humans are proficient in Wisdom."
+    description: `Versatile and adaptable, humans possess a diverse range of skills and abilities, making them capable of excelling in various roles within the land. ${yellow}Humans${white} are proficient in ${blue}Wisdom.`
   },
   {
     name: "elf",
-    description: "Graceful and attuned to nature, elves are known for their agility, keen senses, and mastery of archery and magic. Elves are proficient in Dexterity."
+    description: `Graceful and attuned to nature, elves are known for their agility, keen senses, and mastery of archery and magic. ${yellow}Elves${white} are proficient in ${blue}Dexterity.`
   },
   {
     name: "dwarf",
-    description: "Resilient and skilled craftsmen, dwarves are renowned for their sturdy physique, exceptional endurance, and expertise in mining and forging. Dwarves are proficient in Constitution."
+    description: `Resilient and skilled craftsmen, dwarves are renowned for their sturdy physique, exceptional endurance, and expertise in mining and forging. ${yellow}Dwarves${white} are proficient in ${green}Constitution.`
   },
   {
     name: "dragonborn",
-    description: "Ancient and wise, dragonborn embody power and arcane knowledge, carrying the blood of dragons within them. Dragonborn are proficient in Intelligence."
+    description: `Ancient and wise, dragonborn embody power and arcane knowledge, carrying the blood of dragons within them. ${red}Dragonborn${white} are proficient in ${green}Intelligence.`
   },
   {
     name: "centaur",
-    description: "Majestic and swift, centaurs possess both the strength of a horse and the intellect of a humanoid, making them exceptional warriors and natural leaders. Centaurs are proficient in Charisma."
+    description: `Majestic and swift, centaurs possess both the strength of a horse and the intellect of a humanoid, making them exceptional warriors and natural leaders. ${red}Centaurs${white} are proficient in ${blue}Charisma.`
   },
   {
     name: "orc",
-    description: "Fierce and formidable, orcs are born warriors, known for their physical strength, ferocity in battle, and indomitable spirit. Orcs are proficient in Strength."
+    description: `Fierce and formidable, orcs are born warriors, known for their physical strength, ferocity in battle, and indomitable spirit. ${yellow}Orcs${white} are proficient in ${red}Strength.`
   }
 ]
 
@@ -77,7 +78,7 @@ process.login = [
     //check if user is already connected under same username
     var usernameIsOnline = userIsOnline(username);
     if (usernameIsOnline) {
-      connection.sendmsg("Somebody is already connected under that username.", null);
+      connection.sendmsg(`${red}Somebody is already connected under that username.`, null);
       delete connection.username;
       setTimeout(() => {connection.close(), 500});
       return;
@@ -89,7 +90,7 @@ process.login = [
     if (process.users[username] !== undefined) {
       connection.sendmsg(`Welcome back, ${username}. Password: `, process.login[1], "nl");
     } else {
-      connection.sendmsg(`Ah, ${username}, you say? Alas, that name remains untold within these hallowed realms. Would you like to create a new account? [Y/n] `, process.login[2], "nl");
+      connection.sendmsg(`Ah, ${yellow}${username}${white}, you say? Alas, that name remains untold within these hallowed realms. ${green}Would you like to create a new account? [Y/n] `, process.login[2], "nl");
     }
   },
   function(connection, text) {
@@ -97,23 +98,25 @@ process.login = [
     var hash = md5(text);
     if (process.users[connection.username].passwd == hash) {
       var user = process.users[connection.username];
-      connection.sendmsg("Successfully logged in.", null, "d500");
+      connection.sendmsg(`${green}Successfully logged in.`, null, "d500");
 
       setTimeout(() => {process.start(connection)}, 700);
     } else {
-      connection.sendmsg("Incorrect password, try again: ", null, "nld3000");
+      connection.sendmsg(`${red}Incorrect password, try again: ${white}`, null, "nld3000");
     }
   },
   function(connection, text) {
     connection.sendmsg(text);
-    var choice = ynChoice(connection, text, 2, "Would you like to create a new account?");
+    var choice = ynChoice(connection, text, 2, `${green}Would you like to create a new account?`);
     if (choice == undefined) return;
 
     if (choice) {
-      connection.sendmsg(`\nWelcome to the Land of Ambia, ${connection.username}. Before you get started, we need to ask a few questions about your character.`);
-      connection.sendmsg(`First, you'll need to set a password for your account: `, process.login[3], "nl");
+      connection.sendmsg(`\nWelcome to ${red}The Land of Ambia${white}, ${connection.username}. Before you get started, we need to ask a few questions about your character.`);
+      connection.sendmsg(`First, you'll need to set a ${red}password${white} for your account: `, process.login[3], "nl");
     } else {
-      connection.sendmsg("What be thy name, adventurer?", process.login[0], "l");
+      connection.sendmsg(`${green}What be thy name, adventurer?`, process.login[0], "l");
+      process.removeFromArray(process.connectedUsers, connection.username);
+      connection.username = undefined;
     }
   },
   function(connection, text) {
@@ -125,10 +128,10 @@ process.login = [
     connection.sendmsg('*'.repeat(text.length));
     var hash = md5(text);
     if (connection.passwd == hash) {
-      connection.sendmsg("Your password has been set.");
+      connection.sendmsg(`${green}Your password has been set.`);
       connection.sendmsg('\n' + process.art.racelist, process.login[5], "l");
     } else {
-      connection.sendmsg("Passwords do not match, try again. Enter password: ", process.login[3], "nl");
+      connection.sendmsg(`${red}Passwords do not match, try again.${white} Enter password: `, process.login[3], "nl");
     }
   },
   function(connection, text) {
@@ -137,7 +140,7 @@ process.login = [
     if (choice == -1) return;
 
     connection.race = races[choice].name;
-    connection.sendmsg(`${races[choice].name}:`);
+    connection.sendmsg(`${blue}${process.capitalizeFirst(races[choice].name)}:`);
     connection.sendmsg(races[choice].description);
     connection.sendmsg("\nIs this the race you want to select for your character? [Y/n] ", process.login[6], "nl");
   },

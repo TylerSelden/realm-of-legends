@@ -66,6 +66,26 @@
     #input textarea::placeholder {
       color: #ccc;
     }
+
+    .red {
+      color: #FF5252; /* Red */
+    } 
+    
+    .green {
+      color: #69F0AE; /* Green */
+    } 
+    
+    .blue {
+      color: #448AFF; /* Blue */
+    } 
+    
+    .yellow {
+      color: #FFD740; /* Yellow */
+    }
+
+    color {
+      font-weight: bold;
+    }
   </style>
 </head>
 <body>
@@ -93,6 +113,7 @@
 
       socket.onmessage = function (event) {
         var message = event.data;
+        console.log(message);
         displayMessage(message);
       };
 
