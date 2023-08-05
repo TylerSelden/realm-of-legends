@@ -1,4 +1,4 @@
-const {red, green, blue, yellow, white} = require('./colors.js');
+const {red, green, blue, yellow, gray, white} = require('./colors.js');
 
 // process.sendmsg = function(message, callback, flags) {
 //   if (flags == undefined) flags = "";
@@ -133,7 +133,7 @@ process.sendmsg = function (message, callback, flags) {
         i++; // Move to the next line if no break is needed
       }
     }
-    
+
     message = broken.join('\n');
     // put HTML back in
     if (colorElems !== null) {
@@ -159,7 +159,7 @@ process.sendRoomData = function(user, flags, callback) {
   
   user.connection.sendmsg(`\n${red}${room.name}:${white}`);
   user.connection.sendmsg(`${room.description}\n`);
-  user.connection.sendmsg(`Exits:`);
+  user.connection.sendmsg(`${red}Exits:`);
   if (room.exits.north !== undefined) user.connection.sendmsg(room.exits.north.description);
   if (room.exits.east !== undefined) user.connection.sendmsg(room.exits.east.description);
   if (room.exits.south !== undefined) user.connection.sendmsg(room.exits.south.description);

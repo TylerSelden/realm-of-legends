@@ -6,7 +6,7 @@ const { stringify, parse } = require('circular-json');
 require('./art.js');
 var { loadRooms, rooms, handleInput } = require('./rooms.js')
 
-const {red, green, blue, yellow, white} = require('./colors.js');
+const {red, green, blue, yellow, gray, white} = require('./colors.js');
 
 process.connectedUsers = [];
 process.users = {};
