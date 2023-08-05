@@ -90,7 +90,7 @@ process.login = [
     if (process.users[username] !== undefined) {
       connection.sendmsg(`Welcome back, ${username}. Password: `, process.login[1], "nl");
     } else {
-      connection.sendmsg(`Ah, ${yellow}${username}${white}, you say? Alas, that name remains untold within these hallowed realms. ${green}Would you like to create a new account? [Y/n] `, process.login[2], "nl");
+      connection.sendmsg(`Ah, ${yellow}${username}${white}, you say? Alas, that name remains untold within these hallowed realms. ${green}Would you like to create a new account? ${green}[Y/n]${white} `, process.login[2], "nl");
     }
   },
   function(connection, text) {
@@ -142,16 +142,16 @@ process.login = [
     connection.race = races[choice].name;
     connection.sendmsg(`${blue}${process.capitalizeFirst(races[choice].name)}:`);
     connection.sendmsg(races[choice].description);
-    connection.sendmsg("\nIs this the race you want to select for your character? [Y/n] ", process.login[6], "nl");
+    connection.sendmsg(`\nIs this the race you want to select for your character? ${green}[Y/n]${white} `, process.login[6], "nl");
   },
   function(connection, text) {
     connection.sendmsg(text);
-    var choice = ynChoice(connection, text, 6, "Is this the race you want to select for your character?");
+    var choice = ynChoice(connection, text, 6, `Is this the race you want to select for your character?`);
     if (choice == undefined) return;
 
     if (choice) {
-      connection.sendmsg(`Your character's race has been set to ${connection.race}.`);
-      connection.sendmsg(`\nFinally, you'll need to customize your character's appearance, to make it stand out from everybody else.`);
+      connection.sendmsg(`Your character's race has been set to ${yellow}${connection.race}.`);
+      connection.sendmsg(`\nFinally, you'll need to customize your character's ${green}appearance${white}, to make it stand out from everybody else.`);
       connection.sendmsg(process.art.characterHairColor, process.login[7], "l");
     } else {
       connection.sendmsg(process.art.racelist, process.login[5], "l");
@@ -163,15 +163,15 @@ process.login = [
     if (choice == -1) return;
 
     connection.hairColor = hairColors[choice];
-    connection.sendmsg(`\nWould you like your character to have ${connection.hairColor} hair? [Y/n] `, process.login[8], "nl");
+    connection.sendmsg(`\nWould you like your character to have ${red}${connection.hairColor} hair${white}? ${green}[Y/n]${white} `, process.login[8], "nl");
   },
   function(connection, text) {
     connection.sendmsg(text);
-    var choice = ynChoice(connection, text, 8, `Would you like your character to have ${connection.hairColor} hair?`);
+    var choice = ynChoice(connection, text, 8, `Would you like your character to have ${red}${connection.hairColor} hair${white}?`);
     if (choice == undefined) return;
 
     if (choice) {
-      connection.sendmsg(`Your character's hair color has been set to ${connection.hairColor}.`);
+      connection.sendmsg(`Your character's hair color has been set to ${red}${connection.hairColor}.`);
       connection.sendmsg('\n' + process.art.characterHeight, process.login[9], "l");
     } else {
       connection.sendmsg(process.art.characterHairColor, process.login[7], "l");
@@ -183,28 +183,28 @@ process.login = [
     if (choice == -1) return;
 
     connection.height = heights[choice];
-    connection.sendmsg(`\nWould you like your character to be ${connection.height}? [Y/n] `, process.login[10], "nl");
+    connection.sendmsg(`\nWould you like your character to be ${green}${connection.height}${white}? ${green}[Y/n]${white} `, process.login[10], "nl");
   },
   function(connection, text) {
     connection.sendmsg(text);
-    var choice = ynChoice(connection, text, 10, `Would you like your character to be ${connection.height}?`);
+    var choice = ynChoice(connection, text, 10, `Would you like your character to be ${green}${connection.height}${white}?`);
     if (choice == undefined) return;
 
     if (choice) {
-      connection.sendmsg(`\nYou are ${connection.username}, a ${connection.race} who is ${connection.height} and has ${connection.hairColor} hair.`);
-      connection.sendmsg("Is this description correct (this cannot be changed)? [Y/n] ", process.login[11], "nl");
+      connection.sendmsg(`\nYou are ${red}${connection.username}${white}, a ${red}${connection.race}${white} who is ${red}${connection.height}${white} and has ${red}${connection.hairColor} hair.${white}`);
+      connection.sendmsg(`Is this description correct (this cannot be changed)? ${green}[Y/n]${white} `, process.login[11], "nl");
     } else {
       connection.sendmsg(process.art.characterHeight, process.login[9], "l");
     }
   },
   function(connection, text) {
     connection.sendmsg(text);
-    var choice = ynChoice(connection, text, 11, "Is this description correct (this cannot be changed)?");
+    var choice = ynChoice(connection, text, 11, `Is this description correct (${red}this cannot be changed${white})?`);
     if (choice == undefined) return;
 
     if (choice) {
-      connection.sendmsg(`Congratulations ${connection.username}, you have completed your character!`);
-      connection.sendmsg(`Logging in...\n`);
+      connection.sendmsg(`Congratulations ${green}${connection.username}${white}, you have completed your character!`);
+      connection.sendmsg(`${green}Logging in...\n`);
       process.users[connection.username] = new Character(connection.passwd, connection.race, connection.height, connection.hairColor);
       process.users[connection.username].connection = connection;
 
@@ -222,10 +222,10 @@ process.login = [
 function numberedChoice(connection, text, index, min, max) {
   var choice = parseInt(text);
   if (isNaN(choice)) {
-    connection.sendmsg("Please enter a valid number: ", process.login[index], "nl");
+    connection.sendmsg(`${red}Please enter a valid number: `, process.login[index], "nl");
     return -1;
   } else if (choice < min || choice > max) {
-    connection.sendmsg(`Please enter a number between ${min} and ${max}: `, process.login[index], "nl");
+    connection.sendmsg(`${red}Please enter a number between ${min} and ${max}: `, process.login[index], "nl");
     return -1;
   } else {
     choice--;
@@ -239,7 +239,7 @@ function ynChoice(connection, text, index, invalidMsg) {
   } else if (text.toLowerCase() == 'n') {
     return false;
   } else {
-    connection.sendmsg(`Invalid option. ${invalidMsg} [Y/n] `, process.login[index], "nl");
+    connection.sendmsg(`${red}Invalid option.${white} ${invalidMsg} ${green}[Y/n]${white} `, process.login[index], "nl");
   }
 }
 

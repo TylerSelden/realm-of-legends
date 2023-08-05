@@ -54,19 +54,5 @@
     "inventory": [],
     "version": 1.6,
     "admin": false
-  },
-  "testing": {
-    "passwd": "912ec803b2ce49e4a541068d495ab570",
-    "race": "human",
-    "height": "very tall",
-    "hairColor": "black",
-    "room": [
-      0,
-      0,
-      0
-    ],
-    "inventory": [],
-    "admin": false,
-    "version": 1.6
   }
 }

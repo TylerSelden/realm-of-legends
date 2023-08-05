@@ -46,6 +46,10 @@ const {red, green, blue, yellow, white} = require('./colors.js');
 //   }, delay);
 // }
 
+function visibleLength(str) {
+  return str.replaceAll("​", "").length;
+}
+
 process.sendmsg = function (message, callback, flags) {
   if (flags == undefined) flags = "";
   /*
@@ -63,9 +67,6 @@ process.sendmsg = function (message, callback, flags) {
 
   if (typeof (callback) == "function") this.callback = callback;
 
-  const stripHTML = (str) => str.replace(/<[^>]*>?/gm, '');
-  const visibleLength = (str) => stripHTML(str).length;
-
   setTimeout(() => {
     // this.send(message);
     if (!flags.includes('n')) {
@@ -74,13 +75,13 @@ process.sendmsg = function (message, callback, flags) {
     }
 
     // this effectively resets the color at the end of a line automatically, unless flag w
-    // if there is no closing color tag, and flag n, continue the color through the next message  
+    // if there is no closing color tag, and flag n, continue the color through the next message
+    var colorElems = message.match(/<[^<>]*>/g);
     if (this.continueColor !== undefined) {
       message = message.replace(/^/, this.continueColor);
       this.continueColor = true;
     }
     if (!flags.includes('w')) {
-      var colorElems = message.match(/<[^<>]*>/g);
       if (colorElems !== null && colorElems[colorElems.length - 1] !== white) {
         message += white;
         if (flags.includes('n')) this.continueColor = colorElems[colorElems.length - 1];
@@ -98,26 +99,70 @@ process.sendmsg = function (message, callback, flags) {
     }
 
     // break message into line-sized pieces
-    var broken = message.split('\n');
-    for (var i = 0; i < broken.length; i++) {
-      var line = broken[i];
-      var visibleLineLength = visibleLength(line);
-      var originalLineLength = line.length;
-      var excessHTMLLength = originalLineLength - visibleLineLength;
+    // remove any zero-width spaces already in the string (can't really imagine why there would be one in the first place but still)
+    message = message.replace("​", "");
+    // that was a very long comment
+    // ok so i actually need to code this now
+    // ...
+    // [inhale]
+    // ...
+    // [exhale]
+    // ok
+    // i think i'm ready
+    // let's do this
+    if (colorElems !== null) message = message.replace(/<[^<>]*>/g, "​") // WARNING!! there is a zero-width space in that string (if using vscode, install gremlins ext.)
+    // replace all HTML elements with zero-width spaces
 
-      while (visibleLineLength > 81) {
-        var index = line.lastIndexOf(" ", 81 + excessHTMLLength);
-        if (index === -1) {
-          // No space found within 81 + excessHTMLLength characters, force split without considering HTML
-          index = 81 + excessHTMLLength;
+    // let's get rid of that hunka
+    // var broken = message.split('\n');
+    // message = "";
+    // for (var i = 0; i < broken.length; i++) {
+    //   var line = broken[i];
+    //   var visibleLineLength = visibleLength(line);
+    //   var excess = line.length - visibleLineLength;
+
+    //   while (visibleLineLength > 81) {
+    //     var index = line.lastIndexOf(" ", 81 + excess);
+    //     if (index === -1) {
+    //       // No space found within 81 + excessHTMLLength characters, force split at 81 (leave HTML)
+    //       index = 80 + excess;
+    //       broken[i] = line.substring(0, index) + '\n' + line.substring(index);
+    //     } else {
+    //       broken[i] = line.substring(0, index) + '\n' + line.substring(index + 1);
+    //       console.log(line.substring(0, index) + '\n' + line.substring(index + 1) + '\n\n');
+    //     }
+    //     message += line.substring(0, index + 1);
+    //     line = line.substring(index + 1);
+    //     visibleLineLength = visibleLength(line);
+    //   }
+    // }
+
+    var broken = message.split('\n');
+    for (var i in broken) {
+      var line = broken[i];
+      if (line.length > 81) {
+        var index = line.lastIndexOf(" ", 81);
+        var excess = line.length - visibleLength(line);
+        if (index < 0) {
+          index = 80 + excess;
+          broken[i] = broken[i].substring(0, index) + '\n' + broken[i].substring(index);
+        } else {
+          broken[i] = broken[i].substring(0, index) + '\n' + broken[i].substring(index + 1);
         }
-        broken[i] = line.substring(0, index) + '\n' + line.substring(index + 1);
-        line = line.substring(index + 1);
-        visibleLineLength = visibleLength(line);
+        // Split the array again to prevent extra-long lines
+        broken = broken.join('\n').split('\n');
+        i = 0; // Restart the loop
       }
     }
 
     message = broken.join('\n');
+    // put HTML back in
+    if (colorElems !== null) {
+      for (var elem of colorElems) {
+        message = message.replace("​", elem);
+      }
+    }
+
     this.send(message);
   }, delay);
 };
