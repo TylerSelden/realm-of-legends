@@ -1,5 +1,5 @@
-(0, 0, 1): Hilltop
-Notes: Add a sign that the player can read that explains the basics of how to move.
+(0, 0, 0): ~ Somewhere Mysterious ~
+Notes: This is essentially an endless void that players enter, if they go out of bounds.
 
 (0, -1, 1): Winding Trail
 Notes: 

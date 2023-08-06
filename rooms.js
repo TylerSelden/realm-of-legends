@@ -34,7 +34,7 @@ process.handleInput = function(connection, text) {
   connection.sendmsg(text);
   var user = process.users[connection.username];
 
-  runCommand(user, text);
+  process.runCommand(user, text);
 }
 
 // function fuzzyFind(arr, str) {
@@ -101,7 +101,7 @@ process.fuzzyFindIndex = function(arr, str) {
 }
 
 
-function runCommand(user, text) {
+process.runCommand = function(user, text) {
   var commandList = commands.map(a => a.keywords);
   var flatCommandList = commandList.flat(1);
   var commandKeyword = process.fuzzyFind(flatCommandList, text);

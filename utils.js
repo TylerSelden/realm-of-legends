@@ -156,8 +156,13 @@ process.sendRoomData = function(user, flags, callback) {
   if (callback !== undefined) callback = null;
   
   var room = process.getRoom(user);
+
+  if (/[a-zA-Z]$/.test(room.name)) {
+    user.connection.sendmsg(`\n${red}${room.name}:${white}`);
+  } else {
+    user.connection.sendmsg(`\n${red}${room.name}${white}`);
+  }
   
-  user.connection.sendmsg(`\n${red}${room.name}:${white}`);
   user.connection.sendmsg(`${room.description}\n`);
   user.connection.sendmsg(`${red}Exits:`);
   if (room.exits.north !== undefined) user.connection.sendmsg(room.exits.north.description);
@@ -166,10 +171,16 @@ process.sendRoomData = function(user, flags, callback) {
   if (room.exits.west !== undefined) user.connection.sendmsg(room.exits.west.description);
 
   user.connection.sendmsg('', callback, flags);
+
+  return true;
 }
 
 process.getRoom = function(user) {
-  return process.rooms[user.room[0]][user.room[1]][user.room[2]];
+  if (process.rooms[user.room[0]] !== undefined && process.rooms[user.room[0]][user.room[1]] !== undefined && process.rooms[user.room[0]][user.room[1]][user.room[2]] !== undefined) {
+    var room = process.rooms[user.room[0]][user.room[1]][user.room[2]];
+    if (!room.unfinished) return room;
+  }
+  return process.rooms[0][0][0]; // out of bounds
 }
 
 process.capitalizeFirst = function(string) {

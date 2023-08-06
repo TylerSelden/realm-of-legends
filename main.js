@@ -47,6 +47,7 @@ server.on('request', function(request) {
     }
   });
   connection.on('close', function() {
+    process.saveUsers();
     if (connection.username !== undefined) process.removeFromArray(process.connectedUsers, connection.username);
     if (connection.username == undefined || process.users[connection.username] == undefined) return;
 
