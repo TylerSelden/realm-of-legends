@@ -54,3 +54,12 @@ server.on('request', function(request) {
     delete process.users[connection.username].connection;
   });
 });
+
+
+process.on('SIGINT', function() {
+  console.log("Stopping server...");
+  // screw disconnecting users gracefully, they can handle it.
+
+  process.saveUsers();
+  process.exit();
+});
